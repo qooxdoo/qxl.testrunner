@@ -1,17 +1,13 @@
-# Qooxdoo Widget Browser
+# Qooxdoo Test Runner
 
-A GUI framework application to show all widgets with different themes
+A GUI framework application to run the unit tests
 
-## Online version
-
-http://www.qooxdoo.org/qxl.widgetbrowser/
-
-## Developing widgetbrowser
+## Developing test runner
 Clone this repo and compile it:
 
 ```
-    $ git clone https://github.com/qooxdoo/qxl.widgetbrowser
-    $ cd qxl.widgetbrowser
+    $ git clone https://github.com/qooxdoo/qxl.testrunner
+    $ cd qxl.testrunner
     $ qx pkg install
     $ qx serve
 ```
