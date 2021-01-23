@@ -1,0 +1,31 @@
+{
+  "$schema": "https://qooxdoo.org/schema/Manifest-1-0-0.json",
+  "info": {
+    "name": "testrunner",
+    "summary": "Test Runner",
+    "description": "This app runs the GUI unit tests",
+    "homepage": "http://demo.qooxdoo.org/current/widgetbrowser",
+    "license": "MIT",
+    "authors": [],
+    "version": "6.0.0"
+  },
+  "provides": {
+    "namespace": "qxl.testrunner",
+    "encoding": "utf-8",
+    "class": "source/class",
+    "resource": "source/resource",
+    "translation": "source/translation",
+    "application": {
+      "class": "qxl.testrunner.Application",
+      "theme": "qx.theme.Simple",
+      "name": "testrunner",
+      "title": "TestRunner"
+    }
+  },
+  "requires": {
+    "@qooxdoo/compiler": "^1.0.0-beta",
+    "@qooxdoo/framework": "^6.0.0-beta",
+    "qooxdoo/qxl.versionlabel": "^1.0.0-beta.0",
+    "qooxdoo/qxl.logpane": "^1.0.1"
+  }
+}
