@@ -2,6 +2,10 @@
 
 A GUI framework application to run the unit tests
 
+## Online Demo
+
+http://www.qooxdoo.org/qxl.testrunner/
+
 ## Developing test runner
 Clone this repo and compile it:
 
