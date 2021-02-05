@@ -25,8 +25,7 @@ qx.Class.define("qxl.testrunner.view.Reporter", {
 
   include : [qxl.testrunner.view.MReportResult],
 
-  construct : function()
-  {
+  construct : function() {
     this.base(arguments);
 
     this.__ignoredPackages = this._getIgnoredPackages();
@@ -57,21 +56,19 @@ qx.Class.define("qxl.testrunner.view.Reporter", {
     __ignoredPackages : null,
     __statusElement : null,
 
-    _applyTestSuiteState : function(value, old)
-    {
-      switch(value)
-      {
+    _applyTestSuiteState : function(value, old) {
+      switch (value) {
         case "loading":
           this.debug("Loading test suite");
           break;
-        case "ready" :
+        case "ready":
           this.debug("Test suite ready");
           this.autoRun();
           break;
-        case "running" :
+        case "running":
           this.debug("Running tests");
           break;
-        case "finished" :
+        case "finished":
           this.debug("Finished running tests");
           this._loadNextPackage();
           break;
@@ -82,8 +79,7 @@ qx.Class.define("qxl.testrunner.view.Reporter", {
     },
 
     // overridden
-    run : function()
-    {
+    run : function() {
       this.fireEvent("runTests");
     },
 
@@ -91,8 +87,7 @@ qx.Class.define("qxl.testrunner.view.Reporter", {
     /**
      * Runs the next package from the list of test namespaces.
      */
-    autoRun : function()
-    {
+    autoRun : function() {
       if (this.__testPackages.length > 0) {
         var nextPackageName = this.__testPackages.shift();
         var nextPackage = qxl.testrunner.runner.ModelUtil.getItemByFullName(this.getTestModel(), nextPackageName);
@@ -104,8 +99,7 @@ qx.Class.define("qxl.testrunner.view.Reporter", {
      * Runs a given subset of tests
      * @param pkg {qxl.testrunner.runner.TestItem} Tests to run
      */
-    _runPackage : function(pkg)
-    {
+    _runPackage : function(pkg) {
       if (pkg) {
         this.getSelectedTests().removeAll();
         this.getSelectedTests().push(pkg);
@@ -118,8 +112,7 @@ qx.Class.define("qxl.testrunner.view.Reporter", {
     },
 
     // overridden
-    _applyTestModel : function(value, old)
-    {
+    _applyTestModel : function(value, old) {
       if (!value) {
         return;
       }
@@ -128,21 +121,20 @@ qx.Class.define("qxl.testrunner.view.Reporter", {
       if (!this.__testPackages) {
         this.__testPackages = [];
         var packages = value.getChildren().getItem(0).getChildren();
-        for (var i=0,l=packages.length; i<l; i++) {
+        for (var i=0, l=packages.length; i<l; i++) {
           var pkg = packages.getItem(i);
           var packageName = pkg.fullName;
           if (this.__ignoredPackages.includes(packageName)) {
             continue;
           }
           if (packageName == "qx.test.ui") {
-            for (var j=0,m=pkg.getChildren().length; j<m; j++) {
+            for (var j=0, m=pkg.getChildren().length; j<m; j++) {
               packageName = pkg.getChildren().getItem(j).getFullName();
               if (!this.__ignoredPackages.includes(packageName)) {
                 this.__testPackages.push(packageName);
               }
             }
-          }
-          else {
+          } else {
             this.__testPackages.push(packageName);
           }
         }
@@ -152,23 +144,20 @@ qx.Class.define("qxl.testrunner.view.Reporter", {
     /**
      * Reloads the AUT with the next package from the list.
      */
-    _loadNextPackage : function()
-    {
+    _loadNextPackage : function() {
       if (this.__testPackages.length > 0) {
         var testPackage = this.__testPackages[0];
         var newAutUri = this.getAutUri().replace(/(.*?testclass=)(.*)/, "$1" + testPackage);
         this.setStatus("Loading package " + testPackage);
         this.setAutUri(newAutUri);
-      }
-      else {
+      } else {
         this.setStatus("finished");
       }
     },
 
 
     // overridden
-    _onTestChangeState : function(testResultData)
-    {
+    _onTestChangeState : function(testResultData) {
       this.saveTestResult(testResultData);
       var testName = testResultData.getFullName();
       var state = this.getTestResults()[testName].state;
@@ -176,8 +165,7 @@ qx.Class.define("qxl.testrunner.view.Reporter", {
       this.__infoElem.innerHTML = testName + ": " + state;
 
       if ((state == "failure" || state == "error") &&
-        qx.core.Environment.get("qxl.testrunner.reportServer"))
-      {
+        qx.core.Environment.get("qxl.testrunner.reportServer")) {
         this.reportResult(testName);
       }
     },
@@ -187,8 +175,7 @@ qx.Class.define("qxl.testrunner.view.Reporter", {
      * Get a list of packages to skip from the <code>ignore</code> URI parameter
      * @return {String[]} List of package names to ignore
      */
-    _getIgnoredPackages : function()
-    {
+    _getIgnoredPackages : function() {
       var parsedUri = qx.util.Uri.parseUri(location.href);
       if (parsedUri.queryKey && parsedUri.queryKey.ignorePackages) {
         return parsedUri.queryKey.ignorePackages.split(",");
@@ -198,8 +185,7 @@ qx.Class.define("qxl.testrunner.view.Reporter", {
 
 
     // overridden
-    _applyStatus : function(value)
-    {
+    _applyStatus : function(value) {
       this.__statusElement.innerHTML = value;
     }
 

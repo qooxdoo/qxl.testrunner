@@ -32,8 +32,7 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView",
   extend : qx.ui.core.Widget,
   include : [qx.ui.core.MNativeOverflow],
 
-  construct : function()
-  {
+  construct : function() {
     this.base(arguments);
     this.set({
       overflowX : "auto",
@@ -47,8 +46,7 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView",
     }
     // Workaround for http://bugzilla.qooxdoo.org/show_bug.cgi?id=7679
     if (qx.core.Environment.get("engine.name") == "mshtml" &&
-      qx.core.Environment.get("browser.documentmode") == 9)
-    {
+      qx.core.Environment.get("browser.documentmode") == 9) {
       this.getContentElement().setStyle("position", "relative");
     }
   },
@@ -86,8 +84,7 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView",
      *
      * @param testResult {Object} A test model object
      */
-    addTestResult : function(testResult)
-    {
+    addTestResult : function(testResult) {
       //this.__results.push(testResult);
       testResult.addListener("changeState", function() {
         this.__onStateChange(testResult);
@@ -100,8 +97,7 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView",
      *
      * @return {void}
      */
-    clear : function()
-    {
+    clear : function() {
       this.getContentElement().getDomElement().innerHTML = "";
       this.__results = {};
     },
@@ -113,8 +109,7 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView",
      *
      * @param testResult {qxl.testrunner.runner.TestItem} Test data object
      */
-    __onStateChange : function(testResult)
-    {
+    __onStateChange : function(testResult) {
       if (testResult.getState() === testResult.getPreviousState()) {
         return;
       }
@@ -152,8 +147,7 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView",
      * Updates an existing list entry corresponding to a given test result
      * @param testResult {qxl.testrunner.runner.TestItem} Test data object
      */
-    _updateResultElement : function(testResult)
-    {
+    _updateResultElement : function(testResult) {
       var fullName = testResult.getFullName();
       var state = testResult.getState();
       var coll = this.__results[fullName];
@@ -169,8 +163,7 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView",
 
 
     // overridden
-    _createContentElement : function()
-    {
+    _createContentElement : function() {
       return new qx.html.Element("ul", {}, {
         "class": "resultPane"
       });
@@ -183,15 +176,14 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView",
      * @param testResult {qxl.testrunner.runner.TestItem} Test data object
      * @return {q} Collection containing the error detail element
      */
-    _getErrorDetailElement : function(testResult)
-    {
+    _getErrorDetailElement : function(testResult) {
       var exceptArr = testResult.getExceptions();
       if (exceptArr.length == 0) {
         return null;
       }
 
       var coll = q.create("<div class='errorDetail'></div>");
-      for (var i=0,l=exceptArr.length; i<l; i++) {
+      for (var i=0, l=exceptArr.length; i<l; i++) {
         var error = exceptArr[i].exception;
         var errorStr = error.toString ? error.toString() :
           error.message ? error.message : "Unknown Error";
@@ -203,7 +195,7 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView",
 
         var trace = testResult.getStackTrace(exceptArr[i].exception);
         if (trace && trace.length > 0) {
-          var traceEl = q.create('<div class="trace">Stack trace: <br/>' + trace + '</div>');
+          var traceEl = q.create("<div class=\"trace\">Stack trace: <br/>" + trace + "</div>");
           if (!this.getShowStackTrace()) {
             traceEl.hide();
           }
@@ -220,15 +212,13 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView",
      * @param value {Boolean} Display (true) or hide (false) stack trace info.
      * @return {void}
      */
-    __applyShowStackTrace : function(value)
-    {
+    __applyShowStackTrace : function(value) {
       var coll = q(".resultPane .trace");
       value ? coll.show() : coll.hide();
     }
   },
 
-  destruct : function()
-  {
+  destruct : function() {
     this.__results = null;
   }
 });

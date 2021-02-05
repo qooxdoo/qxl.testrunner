@@ -2,8 +2,7 @@ qx.Class.define("qxl.testrunner.view.mobile.MainButton", {
 
   extend : qx.ui.mobile.form.Button,
 
-  construct : function(label, icon)
-  {
+  construct : function(label, icon) {
     this.base(arguments, label, icon);
     qx.bom.element.Class.replace(this.getContentElement(), "button", "navigationbar-backbutton");
   },
@@ -18,12 +17,11 @@ qx.Class.define("qxl.testrunner.view.mobile.MainButton", {
 
   members :
   {
-    _applyState : function(value)
-    {
+    _applyState : function(value) {
       var el = this.getContentElement();
       var cls = qx.bom.element.Class;
       cls.removeClasses(el, ["runbutton", "stopbutton"]);
-      switch(value) {
+      switch (value) {
         case "init":
           break;
         case "loading":

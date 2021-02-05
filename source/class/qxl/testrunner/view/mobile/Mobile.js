@@ -27,8 +27,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
 
   extend : qxl.testrunner.view.Abstract,
 
-  construct : function()
-  {
+  construct : function() {
     this._initPage();
   },
 
@@ -47,8 +46,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
     /**
      * Run the suite, or stop a running suite.
      */
-    _onMainButtonTap : function()
-    {
+    _onMainButtonTap : function() {
       var suiteState = this.getTestSuiteState();
       if (suiteState == "ready" || suiteState == "finished" || suiteState == "aborted") {
         if (suiteState == "finished" || suiteState == "aborted") {
@@ -60,8 +58,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
           tests : {}
         };
         this.fireEvent("runTests");
-      }
-      else if (suiteState == "running") {
+      } else if (suiteState == "running") {
         this.fireEvent("stopTests");
       }
     },
@@ -69,8 +66,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
     /**
      * Creates the main and detail pages
      */
-    _initPage : function()
-    {
+    _initPage : function() {
       this.__testRows = {};
       var mainPage = this.__mainPage = new qx.ui.mobile.page.NavigationPage();
       mainPage.setTitle("qx Test Runner");
@@ -79,8 +75,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
       mainButton.addListener("tap", this._onMainButtonTap, this);
       mainPage.getRightContainer().add(mainButton);
 
-      mainPage.addListener("initialize", function()
-      {
+      mainPage.addListener("initialize", function() {
         this.__testRows = {};
         var list = this.__testListWidget = new qx.ui.mobile.list.List({
           configureItem : this._configureListItem.bind(this)
@@ -98,7 +93,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
       detailPage.setTitle("Result Details");
       detailPage.addListener("back", function() {
         mainPage.show({animation:"slide", reverse:true});
-      },this);
+      }, this);
 
       // Add the pages to the page manager.
       var manager = new qx.ui.mobile.page.Manager(false);
@@ -115,8 +110,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      * @param data {qx.core.Object} Model item
      * @param row {Integer} Index of the item's list row
      */
-    _configureListItem : function(item, data, row)
-    {
+    _configureListItem : function(item, data, row) {
       if (!data) {
         return;
       }
@@ -130,9 +124,9 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
       var testState = data.getState();
       var hasExceptions = data.getExceptions().length > 0;
 
-      var cssClass, selectable;
+      var cssClass; var selectable;
       var subtitle = "<strong>" + testState + "</strong>";
-      switch(testState) {
+      switch (testState) {
         case "start":
           cssClass = "start";
           selectable = false;
@@ -181,8 +175,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      * @param exceptions {Map[]} List of exception maps
      * @return {String} Exception summary
      */
-    _getExceptionSummary : function(exceptions)
-    {
+    _getExceptionSummary : function(exceptions) {
       return exceptions.map(function(ex) {
         return (ex.exception.message || ex.exception.toString()).replace(/\n/g, "<br/>");
       }).join("<br/>");
@@ -193,8 +186,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      *
      * @return  {qx.ui.mobile.form.Group} Group widget
      */
-    _getStatusBar : function()
-    {
+    _getStatusBar : function() {
       var statusBar = new qx.ui.mobile.container.Composite(new qx.ui.mobile.layout.HBox());
       var statusGroup = new qx.ui.mobile.form.Group([statusBar]);
       statusGroup.getContentElement().id = "statusgroup";
@@ -208,8 +200,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      *
      * @return {Iframe} AUT Iframe element
      */
-    getIframe : function()
-    {
+    getIframe : function() {
       if (!this.__iframe) {
         this.__iframe = qx.bom.Iframe.create({
           onload: "qx.event.handler.Iframe.onevent(this)",
@@ -230,8 +221,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      * @param value {String} AUT URI
      * @param old {String} Previous value
      */
-    _applyAutUri : function(value, old)
-    {
+    _applyAutUri : function(value, old) {
       if (!value || value == old) {
         return;
       }
@@ -246,8 +236,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      * @param value {String} New status value (HTML supported)
      * @param old {String} Previous status value
      */
-    _applyStatus : function(value, old)
-    {
+    _applyStatus : function(value, old) {
       if (!value[0] || (value === old)) {
         return;
       }
@@ -257,37 +246,35 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
 
     /**
      * Applies test suite status changes to the UI
-     *
      * @param value {String} New testSuiteState
      * @param value {String} Previous testSuiteState
+     * @param old
      */
-    _applyTestSuiteState : function(value, old)
-    {
-      switch(value)
-      {
+    _applyTestSuiteState : function(value, old) {
+      switch (value) {
         case "init":
           this.setStatus("Waiting for tests");
           break;
-        case "loading" :
+        case "loading":
           this.setStatus("Loading tests...");
           break;
-        case "ready" :
+        case "ready":
           this.setStatus(this.getSelectedTests().length + " tests ready to run.");
           break;
-        case "error" :
+        case "error":
           this.setStatus("Couldn't load test suite!");
           break;
-        case "running" :
+        case "running":
           this.setStatus("Running tests...");
           break;
-        case "finished" :
+        case "finished":
           this.__suiteResults.finishedAt = new Date().getTime();
           this.setStatus("Test suite finished. " + this._getSummary());
           //re-apply selection so the same suite can be executed again
           this.setSelectedTests(new qx.data.Array());
           this.setSelectedTests(this.__testList);
           break;
-        case "aborted" :
+        case "aborted":
           this.setSelectedTests(new qx.data.Array());
           this.setSelectedTests(this.__testList);
           this.setStatus("Test run aborted");
@@ -299,8 +286,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
     /**
      * Resets the state of all tests in the suite
      */
-    _clearResults : function()
-    {
+    _clearResults : function() {
       this.__testList.forEach(function(item, index, list) {
         item.setState("start");
         item.setExceptions([]);
@@ -314,8 +300,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      * @param value {qx.core.Object} New test suite model
      * @param old {qx.core.Object} Old test suite model
      */
-    _applyTestModel : function(value, old)
-    {
+    _applyTestModel : function(value, old) {
       if (!value) {
         return;
       }
@@ -326,8 +311,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
     },
 
 
-    _applyTestCount : function(value, old)
-    {},
+    _applyTestCount : function(value, old) {},
 
     /**
      * Reacts to state changes in testResultData objects.
@@ -335,8 +319,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      * @param testResultData {qxl.testrunner.unit.TestResultData} Test result data
      * object
      */
-    _onTestChangeState : function(testResultData)
-    {
+    _onTestChangeState : function(testResultData) {
       var testName = testResultData.getFullName();
       var state = testResultData.getState();
 
@@ -350,7 +333,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
 
       if (exceptions) {
         this.__suiteResults.tests[testName].exceptions = [];
-        for (var i=0,l=exceptions.length; i<l; i++) {
+        for (var i=0, l=exceptions.length; i<l; i++) {
           var ex = exceptions[i].exception;
           var type = ex.classname || ex.type || "Error";
 
@@ -381,8 +364,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      *
      * @return  {String} HTML-formatted summary
      */
-    _getSummary : function()
-    {
+    _getSummary : function() {
       var pass = 0;
       var fail = 0;
       var skip = 0;
@@ -410,14 +392,13 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      *
      * @param ev {qx.event.type.Data} The list's changeSelection event
      */
-    _onListChangeSelection : function(ev)
-    {
+    _onListChangeSelection : function(ev) {
       this.__detailPage.removeAll();
       var testName = qx.lang.Object.getKeyFromValue(this.__testRows, ev.getData());
-      for (var i=0,l=this.__testList.length; i<l; i++) {
+      for (var i=0, l=this.__testList.length; i<l; i++) {
         if (this.__testList.getItem(i).getFullName() == testName) {
           var exceptions = this.__testList.getItem(i).getExceptions();
-          for (var x=0,y=exceptions.length; x<y; x++) {
+          for (var x=0, y=exceptions.length; x<y; x++) {
             var ex = exceptions[x].exception;
             var msg = ex.toString ? ex.toString() : ex.message;
             var stack = ex.getStackTrace ? ex.getStackTrace() : qx.dev.StackTrace.getStackTraceFromError(ex);

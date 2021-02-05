@@ -56,28 +56,24 @@ qx.Class.define("qxl.testrunner.test.DemoTest",
     */
 
 
-    testSuccess : function()
-    {
+    testSuccess : function() {
       this.assertEquals(4, 3+1, "This should never fail!");
       this.assertFalse(false, "Can false be true?!");
     },
 
-    testException : function()
-    {
+    testException : function() {
       this.assertException(function() {
         throw new Error("Ya darn varmint!");
       }, Error, "varmint");
     },
 
-    testFail: function ()
-    {
+    testFail: function () {
       this.assertTrue(false, "Well, what did you expect?");
       this.assertEquals(0, 1, "Nope");
       this.debug("Executed code after failed assertion!");
     },
 
-    testAsyncSimple : function()
-    {
+    testAsyncSimple : function() {
       var self = this;
       this.info("Setting timeout");
       window.setTimeout(function() {
@@ -89,14 +85,12 @@ qx.Class.define("qxl.testrunner.test.DemoTest",
       this.wait();
     },
 
-    testSsl : function()
-    {
+    testSsl : function() {
       this.require(["io.ssl"]);
       this.assert(qx.core.Environment.get("io.ssl"), "This test should have been skipped!");
     },
 
-    testAsyncFail : function()
-    {
+    testAsyncFail : function() {
       var self = this;
       this.info("Setting timeout");
       window.setTimeout(function() {

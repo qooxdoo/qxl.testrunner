@@ -21,8 +21,7 @@ qx.Class.define("qxl.testrunner.runner.TestItem", {
 
   extend : qx.core.Object,
 
-  construct : function()
-  {
+  construct : function() {
     this.base(arguments);
     this.$$test = this;
   },
@@ -70,8 +69,7 @@ qx.Class.define("qxl.testrunner.runner.TestItem", {
      * @param bItem {qxl.testrunner.runner.TestItem} Second item
      * @return {Integer} Comparison result
      */
-    sortFunction : function(aItem, bItem)
-    {
+    sortFunction : function(aItem, bItem) {
       var aType = aItem.getType();
       var bType = bItem.getType();
       // always sort packages before classes
@@ -87,7 +85,7 @@ qx.Class.define("qxl.testrunner.runner.TestItem", {
       if (a < b) {
         return -1;
       }
-      if (a > b ) {
+      if (a > b) {
         return 1;
       }
       return 0;
@@ -112,8 +110,7 @@ qx.Class.define("qxl.testrunner.runner.TestItem", {
      *
      * @return {String} The item's fully qualified name
      */
-    getFullName : function()
-    {
+    getFullName : function() {
       return this.fullName;
     },
 
@@ -123,8 +120,7 @@ qx.Class.define("qxl.testrunner.runner.TestItem", {
      *
      * @return {String} The item's type
      */
-    getType : function()
-    {
+    getType : function() {
       var itemName = this.getName();
 
       if (itemName.indexOf("test") === 0 && itemName.length > 4) {
@@ -134,7 +130,7 @@ qx.Class.define("qxl.testrunner.runner.TestItem", {
         }
         return "test";
       }
-      if (itemName.substr(0,1) === itemName.substr(0,1).toUpperCase()) {
+      if (itemName.substr(0, 1) === itemName.substr(0, 1).toUpperCase()) {
         return "class";
       }
       return "package";
@@ -144,8 +140,7 @@ qx.Class.define("qxl.testrunner.runner.TestItem", {
     /**
      * Sorts the item's children. Packages are always listed before classes.
      */
-    sortChildren : function()
-    {
+    sortChildren : function() {
       this.getChildren().sort(qxl.testrunner.runner.TestItem.sortFunction);
     },
 
@@ -157,26 +152,23 @@ qx.Class.define("qxl.testrunner.runner.TestItem", {
      */
     getMessage : qx.core.Environment.select("engine.name",
     {
-      "default" : function()
-      {
+      "default" : function() {
         if (this.getExceptions() && this.getExceptions().length > 0) {
           var exceptions = this.getExceptions();
           var message = "";
-          for (var i=0,l=exceptions.length; i<l; i++) {
+          for (var i=0, l=exceptions.length; i<l; i++) {
             message += exceptions[i].exception.toString() + " ";
           }
           return message;
-        } else {
+        } 
           return "";
-        }
       },
 
-      "opera" : function()
-      {
+      "opera" : function() {
         if (this.getExceptions() && this.getExceptions().length > 0) {
           var exceptions = this.getExceptions();
           var message = "";
-          for (var i=0,l=exceptions.length; i<l; i++) {
+          for (var i=0, l=exceptions.length; i<l; i++) {
             var msg = exceptions[i].exception.message + "";
             if (msg.indexOf("Backtrace:") < 0) {
               message += exceptions[i].exception.toString();
@@ -186,10 +178,8 @@ qx.Class.define("qxl.testrunner.runner.TestItem", {
           }
           return message;
         }
-        else
-        {
+        
           return "";
-        }
       }
     }),
 
@@ -200,8 +190,7 @@ qx.Class.define("qxl.testrunner.runner.TestItem", {
      * @param ex {Error} Exception
      * @return {String} Stack trace information
      */
-    getStackTrace : function(ex)
-    {
+    getStackTrace : function(ex) {
       var trace = [];
 
       if (typeof (ex.getStackTrace) == "function") {
@@ -211,8 +200,7 @@ qx.Class.define("qxl.testrunner.runner.TestItem", {
       }
 
       // filter Test Runner functions from the stack trace
-      while (trace.length > 0)
-      {
+      while (trace.length > 0) {
         var first = trace[0];
 
         if (first.indexOf("qx.dev.unit.AssertionError") == 0 || first.indexOf("qx.Class") == 0 || first.indexOf("qx.dev.unit.MAssert") == 0 || first.indexOf("script") == 0) {
@@ -239,8 +227,7 @@ qx.Class.define("qxl.testrunner.runner.TestItem", {
     }
   },
 
-  destruct : function()
-  {
+  destruct : function() {
     this.$$test = null;
     if (this.parent) {
       this.parent = null;

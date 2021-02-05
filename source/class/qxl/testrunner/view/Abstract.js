@@ -114,8 +114,7 @@ qx.Class.define("qxl.testrunner.view.Abstract", {
      * @param testResultData {qxl.testrunner.unit.TestResultData}
      * Test result data object
      */
-    addTestResult : function(testResultData)
-    {
+    addTestResult : function(testResultData) {
       testResultData.addListener("changeState", function(ev) {
         this._onTestChangeState(testResultData);
       }, this);
@@ -127,8 +126,7 @@ qx.Class.define("qxl.testrunner.view.Abstract", {
      * @param testResultData {qxl.testrunner.unit.TestResultData}
      * Test result data object
      */
-    _onTestChangeState : function(testResultData)
-    {
+    _onTestChangeState : function(testResultData) {
       this.error("Missing implementation of _onTestChangeState!");
     },
 
@@ -139,8 +137,7 @@ qx.Class.define("qxl.testrunner.view.Abstract", {
      * @param value {String} The message to be displayed
      * @param old {String} Previous value
      */
-    _applyStatus : function(value, old)
-    {
+    _applyStatus : function(value, old) {
       this.info(value);
     },
 
@@ -152,8 +149,7 @@ qx.Class.define("qxl.testrunner.view.Abstract", {
      * "ready", "running", "finished", "aborted", "error"
      * @param old {String} Previous value
      */
-    _applyTestSuiteState : function(value, old)
-    {
+    _applyTestSuiteState : function(value, old) {
       this.info("Test suite state: " + value);
     },
 
@@ -164,9 +160,8 @@ qx.Class.define("qxl.testrunner.view.Abstract", {
      * @param value {Integer} Number of pending tests
      * @param old {Integer} Previous value
      */
-    _applyTestCount : function(value, old)
-    {
-      this.info(value + " tests pending.")
+    _applyTestCount : function(value, old) {
+      this.info(value + " tests pending.");
     },
 
 
@@ -176,8 +171,7 @@ qx.Class.define("qxl.testrunner.view.Abstract", {
      * @param value {Object} Test model object
      * @param old {Object} Previous value
      */
-    _applyTestModel : function(value, old)
-    {
+    _applyTestModel : function(value, old) {
       this.error("Missing implementation of _applyTestModel!");
     },
 
@@ -188,12 +182,10 @@ qx.Class.define("qxl.testrunner.view.Abstract", {
      * @param value {String} AUT URI
      * @param old {String} Previous value
      */
-    _applyAutUri : function(value, old)
-    {}
+    _applyAutUri : function(value, old) {}
   },
 
-  destruct : function()
-  {
+  destruct : function() {
     this.removeAllBindings();
   }
 

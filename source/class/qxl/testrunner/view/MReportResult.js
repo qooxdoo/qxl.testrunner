@@ -32,8 +32,7 @@
  */
 qx.Mixin.define("qxl.testrunner.view.MReportResult", {
 
-  construct : function()
-  {
+  construct : function() {
     this.__results = {};
     this.__autErrors = {};
   },
@@ -51,8 +50,7 @@ qx.Mixin.define("qxl.testrunner.view.MReportResult", {
      *
      * @return {Map} Test results map
      */
-    getTestResults : function()
-    {
+    getTestResults : function() {
       return this.__results;
     },
 
@@ -64,8 +62,7 @@ qx.Mixin.define("qxl.testrunner.view.MReportResult", {
      *
      * @return {Map} Map of uncaught exceptions
      */
-    getAutErrors : function()
-    {
+    getAutErrors : function() {
       return this.__autErrors;
     },
 
@@ -74,8 +71,7 @@ qx.Mixin.define("qxl.testrunner.view.MReportResult", {
      * Use the AUT's global error logging to catch any uncaught exceptions
      * triggered by the unit tests
      */
-    setGlobalErrorHandler : function()
-    {
+    setGlobalErrorHandler : function() {
       var win;
       if (qx.core.Environment.get("qxl.testrunner.testOrigin") == "iframe") {
         var iframe = this.getIframe();
@@ -83,8 +79,7 @@ qx.Mixin.define("qxl.testrunner.view.MReportResult", {
           return;
         }
         win = qx.bom.Iframe.getWindow(iframe);
-      }
-      else {
+      } else {
         win = window;
       }
 
@@ -101,19 +96,16 @@ qx.Mixin.define("qxl.testrunner.view.MReportResult", {
      *
      * @param ex {Error} Caught exception
      */
-    _handleUncaughtError : function(ex)
-    {
+    _handleUncaughtError : function(ex) {
       var currentTest = qx.core.Init.getApplication().runner.currentTestData.fullName;
       if (!this.__autErrors[currentTest]) {
         this.__autErrors[currentTest] = [];
       }
       var msg;
       if (qx.core.Environment.get("browser.name") == "ie" &&
-              qx.core.Environment.get("browser.version") < 9)
-      {
+              qx.core.Environment.get("browser.version") < 9) {
         msg = ex.toString();
-      }
-      else {
+      } else {
         msg = ex;
       }
       this.__autErrors[currentTest].push(msg);
@@ -125,8 +117,7 @@ qx.Mixin.define("qxl.testrunner.view.MReportResult", {
      *
      * @param testResultData {qxl.testrunner.runner.TestItem} Test result object
      */
-    saveTestResult : function(testResultData)
-    {
+    saveTestResult : function(testResultData) {
       var testName = testResultData.getFullName();
       var state = testResultData.getState();
       var exceptions = testResultData.getExceptions();
@@ -139,7 +130,7 @@ qx.Mixin.define("qxl.testrunner.view.MReportResult", {
 
       var messages = [];
       if (exceptions) {
-        for (var i=0,l=exceptions.length; i<l; i++) {
+        for (var i=0, l=exceptions.length; i<l; i++) {
           var message = exceptions[i].exception.toString() + "<br/>";
           message += testResultData.getStackTrace(exceptions[i].exception);
           messages.push(message);
@@ -155,15 +146,13 @@ qx.Mixin.define("qxl.testrunner.view.MReportResult", {
      * @param testName {String} Fully qualified test method name
      * @return {Map} Result data
      */
-    getTestResultData : function(testName)
-    {
+    getTestResultData : function(testName) {
       var data = {};
       var autUri;
       if (qx.core.Environment.get("qxl.testrunner.testOrigin") == "iframe") {
         autUri = qx.bom.Iframe.queryCurrentUrl(this.getIframe());
-      }
-      else {
-        autUri = document.location.href
+      } else {
+        autUri = document.location.href;
       }
 
       if (autUri.indexOf("?") > 0) {
@@ -186,8 +175,7 @@ qx.Mixin.define("qxl.testrunner.view.MReportResult", {
      *
      * @param testName {String} Fully qualified test method name
      */
-    reportResult : function(testName)
-    {
+    reportResult : function(testName) {
       if (qx.core.Environment.get("qx.debug")) {
         this.debug("Reporting result");
       }
@@ -217,8 +205,7 @@ qx.Mixin.define("qxl.testrunner.view.MReportResult", {
      * Returns the results of all tests that didn't end with the status "success"
      * @return {Map} Unsuccessful test results
      */
-    getUnsuccessfulResults : function()
-    {
+    getUnsuccessfulResults : function() {
       var failedTests = {};
       for (var testName in this.__results) {
         var result = this.__results[testName];
@@ -234,8 +221,7 @@ qx.Mixin.define("qxl.testrunner.view.MReportResult", {
      * "failure". Skipped tests are not included.
      * @return {Map} Failed test results
      */
-    getFailedResults : function()
-    {
+    getFailedResults : function() {
       var failedTests = {};
       for (var testName in this.__results) {
         var result = this.__results[testName];
@@ -252,8 +238,7 @@ qx.Mixin.define("qxl.testrunner.view.MReportResult", {
      *
      *  @return {String} Failed results map as JSON
      */
-    getFailedResultsAsJson : function()
-    {
+    getFailedResultsAsJson : function() {
       return qx.lang.Json.stringify(this.getFailedResults());
     },
 
@@ -265,8 +250,7 @@ qx.Mixin.define("qxl.testrunner.view.MReportResult", {
      *
      * @return {String[]} Array of error messages
      */
-    getFormattedAutErrors : function()
-    {
+    getFormattedAutErrors : function() {
       var formattedErrors = [];
       for (var testName in this.__autErrors) {
         var testErrors = this.__autErrors[testName];
@@ -274,11 +258,9 @@ qx.Mixin.define("qxl.testrunner.view.MReportResult", {
           var exception = testErrors[i];
           var message;
           if (qx.core.Environment.get("browser.name") == "ie" &&
-              qx.core.Environment.get("browser.version") < 9)
-          {
+              qx.core.Environment.get("browser.version") < 9) {
             message = exception;
-          }
-          else {
+          } else {
             message = testName + ": " + exception.toString();
             var trace = qx.dev.StackTrace.getStackTraceFromError(exception);
             if (trace.length > 0) {

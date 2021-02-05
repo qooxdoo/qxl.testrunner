@@ -37,8 +37,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
 
   include : [qxl.testrunner.view.MAutoRun],
 
-  construct : function()
-  {
+  construct : function() {
     this.__menuItemStore = {};
 
     this.__app = qx.core.Init.getApplication();
@@ -209,8 +208,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
      * Returns the iframe element the AUT should be loaded in.
      * @return {Element} Iframe element
      */
-    getIframe : function()
-    {
+    getIframe : function() {
       return this.__iframe.getContentElement().getDomElement();
     },
 
@@ -229,8 +227,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
      *
      * @return {qx.ui.container.Composite} The application header
      */
-    __createHeader : function()
-    {
+    __createHeader : function() {
       var layout = new qx.ui.layout.HBox();
       var header = new qx.ui.container.Composite(layout);
       header.setAppearance("app-header");
@@ -240,7 +237,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
       version.setFont("default");
 
       header.add(title);
-      header.add(new qx.ui.core.Spacer, {flex : 1});
+      header.add(new qx.ui.core.Spacer(), {flex : 1});
       header.add(version);
 
       return header;
@@ -252,15 +249,14 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
      * @lint ignoreDeprecated(eval)
      * @return {qx.ui.toolbar.ToolBar} The tool bar
      */
-    __createToolbar : function()
-    {
-      var toolbar = new qx.ui.toolbar.ToolBar;
+    __createToolbar : function() {
+      var toolbar = new qx.ui.toolbar.ToolBar();
 
       var part1 = new qx.ui.toolbar.Part();
       toolbar.add(part1);
 
       this.bind("testSuiteState", part1, "enabled", {converter : function(data) {
-        switch(data) {
+        switch (data) {
           case "init":
           case "loading":
             return false;
@@ -272,7 +268,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
       }});
 
       // Run button
-      var runButton = this.__runButton = new qx.ui.toolbar.Button(this.__app.tr('<b>Run&nbsp;Tests!</b>'), "icon/22/actions/media-playback-start.png");
+      var runButton = this.__runButton = new qx.ui.toolbar.Button(this.__app.tr("<b>Run&nbsp;Tests!</b>"), "icon/22/actions/media-playback-start.png");
       runButton.set({
         textColor : "#36a618",
         rich : true,
@@ -286,7 +282,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
       part1.add(runButton);
 
       // Stop button
-      var stopButton = this.__stopButton = new qx.ui.toolbar.Button(this.__app.tr('<b>Stop&nbsp;Tests</b>'), "icon/22/actions/media-playback-stop.png");
+      var stopButton = this.__stopButton = new qx.ui.toolbar.Button(this.__app.tr("<b>Stop&nbsp;Tests</b>"), "icon/22/actions/media-playback-stop.png");
       stopButton.set({
         textColor : "#ff0000",
         rich : true,
@@ -305,7 +301,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
       reloadButton.addListener("execute", this.__reloadAut, this);
 
       this.bind("testSuiteState", reloadButton, "enabled", {converter : function(data) {
-        switch(data) {
+        switch (data) {
           case "init":
           case "loading":
           case "running":
@@ -345,8 +341,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
         autoReloadToggle.setValue(eval(autoReloadValue));
       }
       autoReloadToggle.bind("value", this, "autoReload", {
-        converter : function(data)
-        {
+        converter : function(data) {
           qx.bom.Cookie.set("qxl.testrunner.autoReload", data.toString(), 365);
           return data;
         }
@@ -357,15 +352,14 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
         this.__app.tr("Native Profiling"),
         "icon/22/actions/document-open-recent.png"
       );
-      nativeProfilingToggle.setToolTipText("Additionally use the browser's native"
-        + " profiling feature (console.profile) for performance tests");
+      nativeProfilingToggle.setToolTipText("Additionally use the browser's native" +
+        " profiling feature (console.profile) for performance tests");
       var nativeProfilingValue = qx.bom.Cookie.get("qxl.testrunner.nativeProfiling");
       if (nativeProfilingValue !== null) {
         nativeProfilingToggle.setValue(eval(nativeProfilingValue));
       }
       nativeProfilingToggle.bind("value", this, "nativeProfiling", {
-        converter : function(data)
-        {
+        converter : function(data) {
           qx.bom.Cookie.set("qxl.testrunner.nativeProfiling", data.toString(), 365);
           return data;
         }
@@ -378,7 +372,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
 
       // add a button for overflow handling
       var chevron = new qx.ui.toolbar.MenuButton(null, "icon/22/actions/media-seek-forward.png");
-      chevron.setAppearance("toolbar-button");  // hide the down arrow icon
+      chevron.setAppearance("toolbar-button"); // hide the down arrow icon
       toolbar.add(chevron);
       toolbar.setOverflowIndicator(chevron);
 
@@ -405,7 +399,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
     _onHideItem : function(e) {
       var partItem = e.getData();
       var menuItems = this._getMenuItems(partItem);
-      for(var i=0,l=menuItems.length;i<l;i++){
+      for (var i=0, l=menuItems.length; i<l; i++) {
         menuItems[i].setVisibility("visible");
       }
     },
@@ -418,7 +412,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
     _onShowItem : function(e) {
       var partItem = e.getData();
       var menuItems = this._getMenuItems(partItem);
-      for(var i=0,l=menuItems.length;i<l;i++){
+      for (var i=0, l=menuItems.length; i<l; i++) {
         menuItems[i].setVisibility("excluded");
       }
     },
@@ -433,65 +427,54 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
      */
     _getMenuItems : function(partItem) {
       var cachedItems = [];
-      if (partItem instanceof qx.ui.toolbar.Part)
-      {
+      if (partItem instanceof qx.ui.toolbar.Part) {
         var partButtons = partItem.getChildren();
-        for(var i=0,l=partButtons.length;i<l;i++)
-        {
-          if(partButtons[i].getVisibility()=='excluded'){
+        for (var i=0, l=partButtons.length; i<l; i++) {
+          if (partButtons[i].getVisibility()=="excluded") {
             continue;
           }
           var cachedItem = this.__menuItemStore[partButtons[i].toHashCode()];
 
-          if (!cachedItem)
-          {
-            if(partButtons[i] instanceof qx.ui.toolbar.Button)
-            {
+          if (!cachedItem) {
+            if (partButtons[i] instanceof qx.ui.toolbar.Button) {
               cachedItem = new qx.ui.menu.Button(
                 partButtons[i].getLabel().translate(),
                 partButtons[i].getIcon()
                 );
-              cachedItem.getChildControl('label',false).setRich(true);
+              cachedItem.getChildControl("label", false).setRich(true);
               cachedItem.setTextColor(partButtons[i].getTextColor());
               cachedItem.setToolTipText(partButtons[i].getToolTipText());
-              partButtons[i].bind("enabled",cachedItem,"enabled");
+              partButtons[i].bind("enabled", cachedItem, "enabled");
               cachedItem.setEnabled(partButtons[i].getEnabled());
-            }
-            else if(partButtons[i] instanceof qx.ui.toolbar.CheckBox)
-            {
+            } else if (partButtons[i] instanceof qx.ui.toolbar.CheckBox) {
               cachedItem = new qx.ui.menu.CheckBox(
                 partButtons[i].getLabel().translate()
                 );
               cachedItem.setIcon(partButtons[i].getIcon());
               cachedItem.setToolTipText(partButtons[i].getToolTipText());
-              partButtons[i].bind("value",cachedItem,"value");
-              partButtons[i].bind("enabled",cachedItem,"enabled");
+              partButtons[i].bind("value", cachedItem, "value");
+              partButtons[i].bind("enabled", cachedItem, "enabled");
               cachedItem.setEnabled(partButtons[i].getEnabled());
               cachedItem.setValue(partButtons[i].getValue());
-            }
-            else
-            {
+            } else {
               cachedItem = new qx.ui.menu.Separator();
             }
-            var listeners = qx.event.Registration.getManager(partButtons[i]).getListeners(partButtons[i],'execute');
-            if(listeners && listeners.length>0)
-            {
-              for(var j=0,k=listeners.length;j<k;j++) {
-                cachedItem.addListener('execute',qx.lang.Function.bind(listeners[j].handler,listeners[j].context));
+            var listeners = qx.event.Registration.getManager(partButtons[i]).getListeners(partButtons[i], "execute");
+            if (listeners && listeners.length>0) {
+              for (var j=0, k=listeners.length; j<k; j++) {
+                cachedItem.addListener("execute", qx.lang.Function.bind(listeners[j].handler, listeners[j].context));
               }
             }
-            listeners = qx.event.Registration.getManager(partButtons[i]).getListeners(partButtons[i],'changeValue');
-            if(listeners && listeners.length>0)
-            {
-              for(var j=0,k=listeners.length;j<k;j++) {
-                cachedItem.addListener('changeValue',qx.lang.Function.bind(listeners[j].handler,listeners[j].context));
+            listeners = qx.event.Registration.getManager(partButtons[i]).getListeners(partButtons[i], "changeValue");
+            if (listeners && listeners.length>0) {
+              for (var j=0, k=listeners.length; j<k; j++) {
+                cachedItem.addListener("changeValue", qx.lang.Function.bind(listeners[j].handler, listeners[j].context));
               }
             }
-            listeners = qx.event.Registration.getManager(partButtons[i]).getListeners(partButtons[i],'tap');
-            if(listeners && listeners.length>0)
-            {
-              for(var j=0,k=listeners.length;j<k;j++) {
-                cachedItem.addListener('tap',qx.lang.Function.bind(listeners[j].handler,listeners[j].context));
+            listeners = qx.event.Registration.getManager(partButtons[i]).getListeners(partButtons[i], "tap");
+            if (listeners && listeners.length>0) {
+              for (var j=0, k=listeners.length; j<k; j++) {
+                cachedItem.addListener("tap", qx.lang.Function.bind(listeners[j].handler, listeners[j].context));
               }
             }
             this.__overflowMenu.addAt(cachedItem, 0);
@@ -509,8 +492,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
      *
      * @return {qx.ui.container.Composite}
      */
-    __createTestList : function()
-    {
+    __createTestList : function() {
       var layout = new qx.ui.layout.VBox();
       //layout.setSeparator("separator-vertical");
 
@@ -521,8 +503,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
       var leftPaneWidth = qx.bom.Cookie.get("qxl.testrunner.leftPaneWidth");
       if (leftPaneWidth !== null) {
         container.setWidth(parseInt(leftPaneWidth));
-      }
-      else {
+      } else {
         container.setWidth(250);
       }
 
@@ -579,8 +560,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
      *
      * @param ev {qx.event.type.Data} Data event containing the selection
      */
-    _onChangeTestSelection : function(ev)
-    {
+    _onChangeTestSelection : function(ev) {
       var selected = this.getSelectedTests();
       if (selected.length > 0) {
         var node = selected.getItem(0);
@@ -612,7 +592,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
               break;
             case "error":
             case "failure":
-              iconMap = "TREEICONSERROR"
+              iconMap = "TREEICONSERROR";
               break;
             default:
               iconMap = "TREEICONS";
@@ -629,8 +609,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
      * @param e {Event} Event data: The pane
      * @return {void}
      */
-    __onPaneResize : function(e)
-    {
+    __onPaneResize : function(e) {
       var pane = this.getUserData("pane");
       var width = e.getData().width;
       qx.bom.Cookie.set("qxl.testrunner." + pane + "PaneWidth", width, 365);
@@ -641,8 +620,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
      *
      * @return {qx.ui.container.Composite} The center pane's content
      */
-    __createCenterPane : function()
-    {
+    __createCenterPane : function() {
       var layout = new qx.ui.layout.VBox();
       layout.setSeparator("separator-vertical");
 
@@ -666,7 +644,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
 
       var toolbar = new qx.ui.toolbar.ToolBar();
       toolbar.setBackgroundColor("white");
-      toolbar.setPadding([0,0]);
+      toolbar.setPadding([0, 0]);
       inner.add(toolbar, {edge: "east"});
 
       toolbar.add(this._getResultsMenuButton());
@@ -682,8 +660,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
       return p1;
     },
 
-    _getResultsMenuButton : function()
-    {
+    _getResultsMenuButton : function() {
       var resultsMenuButton = new qx.ui.toolbar.MenuButton("Options", "icon/16/actions/document-properties.png");
       resultsMenuButton.set({
         margin: [3, 5]
@@ -710,8 +687,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
      *
      * @return {qx.ui.splitpane.Pane} The configured pane
      */
-    __createAutPane : function()
-    {
+    __createAutPane : function() {
       // Second Page
       var pane2 = new qx.ui.splitpane.Pane("vertical");
       pane2.setDecorator(null);
@@ -729,8 +705,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
      *
      * @return {qx.ui.container.Composite} Iframe container
      */
-    __createIframeContainer : function()
-    {
+    __createIframeContainer : function() {
       var layout2 = new qx.ui.layout.VBox();
 
       var pp3 = new qx.ui.container.Composite(layout2).set({
@@ -767,9 +742,8 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
      *
      * @return {log.LogView} The log container
      */
-    __createLogContainer : function()
-    {
-      this.__logView = new qxl.logpane.LogPane()
+    __createLogContainer : function() {
+      this.__logView = new qxl.logpane.LogPane();
       //this.__logView.setShowLogLevel(true);
       this.__logView.bind("logLevel", this, "logLevel");
       return this.__logView;
@@ -780,8 +754,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
      *
      * @return {qx.ui.container.Composite} The progressbar container
      */
-    __createProgressBar : function()
-    {
+    __createProgressBar : function() {
       var container = new qx.ui.container.Composite(new qx.ui.layout.VBox());
 
       var bar = this.__progressBar = new qx.ui.indicator.ProgressBar(0, 10);
@@ -806,9 +779,8 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
           if (data) {
             return data.toString();
           }
-          else {
+          
             return "0";
-          }
         }
       });
 
@@ -863,8 +835,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
      *
      * @return {qx.ui.container.Composite} Status bar container
      */
-    __createStatusBar : function()
-    {
+    __createStatusBar : function() {
       var layout = new qx.ui.layout.HBox(3);
       var statuspane = new qx.ui.container.Composite(layout);
       statuspane.set({
@@ -894,7 +865,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
         this.__testCountField.setValue(count.toString());
       }, this);
 
-      statuspane.add(new qx.ui.core.Spacer, {flex : 1});
+      statuspane.add(new qx.ui.core.Spacer(), {flex : 1});
 
       // System Info
       statuspane.add(new qx.ui.basic.Label(this.__app.tr("System Status: ")).set({
@@ -915,20 +886,18 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
      * @param old {String} Old suite state value
      * @lint ignoreDeprecated(alert)
      */
-    _applyTestSuiteState : function(value, old)
-    {
-      switch(value)
-      {
+    _applyTestSuiteState : function(value, old) {
+      switch (value) {
         case "init":
           this.setStatus("Waiting for tests");
           break;
-        case "loading" :
+        case "loading":
           this.__stack.setSelection([this.__loadingContainer]);
           this.setStatus("Loading tests...");
           this.__testTree.setEnabled(false);
           this.__testTree.resetModel();
           break;
-        case "ready" :
+        case "ready":
           this.__stack.setSelection([this.__testTree]);
           this.setStatus("Test suite ready");
           this.reset();
@@ -946,13 +915,12 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
             this.__testTree.getSelection().push(this.getTestModel());
           }
 
-          if ((this.getAutoReload() && this.__autoReloadActive)
-          || this.getAutoRun())
-          {
+          if ((this.getAutoReload() && this.__autoReloadActive) ||
+          this.getAutoRun()) {
             this.fireEvent("runTests");
           }
           break;
-        case "running" :
+        case "running":
           this.__progressBar.setValue(0);
           var totalTests = qxl.testrunner.runner.ModelUtil.getItemsByProperty(this.getSelectedTests().getItem(0), "type", "test");
           this.__progressBar.setMaximum(totalTests.length);
@@ -960,7 +928,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
           this._setActiveButton(this.__stopButton);
           this.__testTree.setEnabled(false);
           break;
-        case "finished" :
+        case "finished":
           this.setStatus("Test suite finished.");
           this._setActiveButton(this.__runButton);
           this.__testTree.setEnabled(true);
@@ -969,20 +937,19 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
             this.__autoReloadActive = false;
           }
           break;
-        case "aborted" :
+        case "aborted":
           this.setStatus("Test run stopped");
           this._setActiveButton(this.__runButton);
           this.__testTree.setEnabled(true);
           break;
-        case "error" :
+        case "error":
           this.setStatus("Error loading test suite!");
           this.__stack.setSelection([this.__testTree]);
           alert(this._getAutLoadErrorMessage());
-      };
+      }
     },
 
-    _applyAutUri : function(value, old)
-    {
+    _applyAutUri : function(value, old) {
       if (value == null) {
         this.__iframe.resetSource();
       } else {
@@ -990,8 +957,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
       }
     },
 
-    _applyTestModel : function(value, old)
-    {
+    _applyTestModel : function(value, old) {
       if (!value || value === old) {
         return;
       }
@@ -1002,8 +968,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
       this.__testResultView.clear();
 
       if (qx.Class.hasMixin(this.constructor, qxl.testrunner.view.MPerformance) &&
-        window.console && window.console.profile)
-      {
+        window.console && window.console.profile) {
         var autWindow = window;
         if (qx.core.Environment.get("qxl.testrunner.testOrigin") == "iframe") {
           autWindow = qx.bom.Iframe.getWindow(this.getIframe());
@@ -1018,19 +983,16 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
     },
 
 
-    _applyTestCount : function(value, old)
-    {},
+    _applyTestCount : function(value, old) {},
 
-    _applyStatus : function(value, old)
-    {
+    _applyStatus : function(value, old) {
       if (value) {
         this.__statusField.setValue(value);
       }
     },
 
 
-    _onTestChangeState : function(testResultData)
-    {
+    _onTestChangeState : function(testResultData) {
       var state = testResultData.getState();
       var testName = testResultData.getFullName();
       switch (state) {
@@ -1063,13 +1025,11 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
      *
      * @param button {qx.ui.core.Widget} The button that should be visible
      */
-    _setActiveButton : function(button)
-    {
+    _setActiveButton : function(button) {
       button.setVisibility("visible");
       if (button == this.__runButton) {
         this.__stopButton.setVisibility("excluded");
-      }
-      else if (button == this.__stopButton) {
+      } else if (button == this.__stopButton) {
         this.__runButton.setVisibility("excluded");
       }
     },
@@ -1079,19 +1039,17 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
      * Returns the error message to be displayed if the AUT couldn't be loaded
      * @return {String} error message
      */
-    _getAutLoadErrorMessage : function()
-    {
+    _getAutLoadErrorMessage : function() {
       var autDebug;
       try {
         autDebug = this.__iframe.getWindow().qx.core.Environment.get("qx.debug");
-      }
-      catch(ex) {
+      } catch (ex) {
         autDebug = false;
       }
       var autSrc = autDebug ? "/html/tests-source.html" : "/html/tests.html";
 
       return "The test suite couldn't be loaded. Make sure the AUT URI is correct, " +
-        'e.g. "' + autSrc + '".' +
+        "e.g. \"" + autSrc + "\"." +
         "\n\nAlso check the testclass parameter: This should be \"" +
         qx.core.Init.getApplication().runner._testNameSpace +
         "\" according to the current configuration.";
@@ -1101,8 +1059,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
     /**
      * Run the selected tests
      */
-    __runTests : function()
-    {
+    __runTests : function() {
       if (this.getAutoReload()) {
         this.__autoReloadActive = true;
         this.__reloadAut();
@@ -1124,16 +1081,14 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
     /**
      * Stop a running test suite
      */
-    __stopTests : function()
-    {
+    __stopTests : function() {
       this.fireEvent("stopTests");
     },
 
     /**
      * Reload the test suite
      */
-    __reloadAut : function()
-    {
+    __reloadAut : function() {
       this.__stack.setSelection([this.__loadingContainer]);
       this.getSelectedTests().removeAll();
       var src = this.__autUriField.getValue();
@@ -1141,8 +1096,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
       this.setAutUri(src);
     },
 
-    __setSelectionFromCookie : function()
-    {
+    __setSelectionFromCookie : function() {
       var cookieSelection = qx.bom.Cookie.get("qxl.testrunner.selectedTest");
       if (cookieSelection) {
         var found = qxl.testrunner.runner.ModelUtil.getItemByFullName(this.getTestModel(), cookieSelection);
@@ -1154,8 +1108,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
     },
 
     // overridden
-    addTestResult : function(testResultData)
-    {
+    addTestResult : function(testResultData) {
       this.base(arguments, testResultData);
       this.__testResultView.addTestResult(testResultData);
     },
@@ -1163,8 +1116,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
     /**
      * Resets the result counters so that the suite can be run again.
      */
-    reset : function()
-    {
+    reset : function() {
       this.__testResults = {};
       this.resetFailedTestCount();
       this.resetSuccessfulTestCount();
@@ -1177,8 +1129,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
     /**
      * Create keyboard shortcuts for the main controls.
      */
-    _makeCommands : function()
-    {
+    _makeCommands : function() {
       var runTests = new qx.ui.command.Command("Ctrl+R");
       runTests.addListener("execute", this.__runTests, this);
 
@@ -1195,8 +1146,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
      * @param centerPane {qx.ui.core.Widget} center pane
      * @param rightPane {qx.ui.core.Widget} right pane
      */
-    _applyPaneWidths : function(centerPane, rightPane)
-    {
+    _applyPaneWidths : function(centerPane, rightPane) {
       var centerPaneWidth = qx.bom.Cookie.get("qxl.testrunner.centerPaneWidth");
       var rightPaneWidth = qx.bom.Cookie.get("qxl.testrunner.rightPaneWidth");
       if (centerPaneWidth !== null && rightPaneWidth !== null) {
@@ -1208,8 +1158,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
     }
   },
 
-  destruct : function()
-  {
+  destruct : function() {
     this._disposeObjects(
     "__iframe",
     "__overflowMenu",

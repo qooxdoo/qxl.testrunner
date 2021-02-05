@@ -24,24 +24,20 @@ qx.Class.define("qxl.testrunner.test.basic.BasicTest", {
 
   members :
   {
-    testSuccess : function()
-    {
+    testSuccess : function() {
       this.assertEquals(4, 3+1, "This should never fail!");
       this.assertFalse(false, "Can false be true?!");
     },
 
-    testFail: function ()
-    {
+    testFail: function () {
       this.assertTrue(false, "Well, what did you expect?");
     },
 
-    hasNodeJs : function()
-    {
+    hasNodeJs : function() {
       return qx.core.Environment.get("runtime.name") == "node.js";
     },
 
-    testNodeJs : function()
-    {
+    testNodeJs : function() {
       this.require(["nodeJs"]);
     }
   }

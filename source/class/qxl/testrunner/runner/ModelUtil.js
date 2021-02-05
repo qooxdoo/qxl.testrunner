@@ -31,14 +31,13 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
      * returned by {@link qx.dev.unit.TestLoader:getTestDescriptions}
      * @return {Object} Test suite object
      */
-    createModelData : function(testRep)
-    {
+    createModelData : function(testRep) {
       var data = {};
       for (var i=0, l=testRep.length; i<l; i++) {
         var nameSpace = testRep[i].classname.split(".");
         var testList = testRep[i].tests;
         testList.sort();
-        for (var x=0,y=testList.length; x<y; x++) {
+        for (var x=0, y=testList.length; x<y; x++) {
           qxl.testrunner.runner.ModelUtil.addChainToMap(nameSpace.concat(testList[x]), data);
         }
       }
@@ -55,8 +54,7 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
      * @param value {var} Property value
      * @return {Object[]} Array of matching model items
      */
-    getItemsByProperty : function(model, property, value)
-    {
+    getItemsByProperty : function(model, property, value) {
       var propertyName = qx.lang.String.firstUp(property);
       var testList = [];
       if (model["get" + propertyName] && model["get" + propertyName]() === value) {
@@ -68,7 +66,7 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
       }
 
       var kids = model.getChildren();
-      for (var i=0,l=kids.length; i<l; i++) {
+      for (var i=0, l=kids.length; i<l; i++) {
         var child = kids.getItem(i);
         testList = testList.concat(arguments.callee(child, property, value));
       }
@@ -83,14 +81,13 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
      * @param fullName {String} The item's name
      * @return {Object|null} The matching item or null if there is no match
      */
-    getItemByFullName : function(model, fullName)
-    {
+    getItemByFullName : function(model, fullName) {
       if (model.fullName == fullName) {
         return model;
       }
       if (model.getChildren) {
         var kids = model.getChildren();
-        for (var i=0,l=kids.length; i<l; i++) {
+        for (var i=0, l=kids.length; i<l; i++) {
           var child = kids.getItem(i);
           var found = arguments.callee(child, fullName);
           if (found) {
@@ -108,26 +105,24 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
      *
      * @param model {Object} The model to process
      */
-    addDataFields : function(model)
-    {
+    addDataFields : function(model) {
       if (!model.parent) {
         model.fullName = model.getName();
       }
 
       if (model.getChildren) {
         var mType = model.getType();
-        if (mType == "package" || mType == "class" ) {
+        if (mType == "package" || mType == "class") {
           model.sortChildren();
         }
         var kids = model.getChildren();
-        for (var i=0,l=kids.length; i<l; i++) {
+        for (var i=0, l=kids.length; i<l; i++) {
           var child = kids.getItem(i);
           child.parent = model;
 
           if (child.getType() == "test") {
             child.fullName = model.fullName + ":" + child.getName();
-          }
-          else {
+          } else {
             child.fullName = model.fullName + "." + child.getName();
           }
 
@@ -135,12 +130,12 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
 
           // skip binding the children's state to the parent in old IEs to
           // accelerate application startup
-          if (!(qx.core.Environment.get("browser.name") === "ie"
-              && qx.core.Environment.get("browser.version") < 9)) {
+          if (!(qx.core.Environment.get("browser.name") === "ie" &&
+              qx.core.Environment.get("browser.version") < 9)) {
             child.bind("state", model, "state", {
               converter : function(data, model) {
-                if (model.getState() == "failure" || model.getState() == "error"
-                  || data == "start" || data == "wait") {
+                if (model.getState() == "failure" || model.getState() == "error" ||
+                  data == "start" || data == "wait") {
                   return model.getState();
                 }
                 return data;
@@ -168,8 +163,7 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
      * @param nsArr {String[]} Array of key names
      * @param obj {Map} The initial map
      */
-    addChainToMap : function(nsArr, obj)
-    {
+    addChainToMap : function(nsArr, obj) {
       if (nsArr.length == 0) {
         return;
       }
@@ -182,7 +176,7 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
       }
 
       var found = false;
-      for (var i=0,l=obj.children.length; i<l; i++) {
+      for (var i=0, l=obj.children.length; i<l; i++) {
         if (obj.children[i].name === next) {
           found = obj.children[i];
           break;
@@ -207,8 +201,7 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
      * @param node {Object} Model node
      * @return {Object|null} Following sibling
      */
-    getNextSiblingOf : function(node)
-    {
+    getNextSiblingOf : function(node) {
       if (!node.parent) {
         return null;
       }
@@ -244,11 +237,9 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
           if (autWindow.qx.Class.hasMixin(clazz, mixin)) {
             return true;
           }
-        } else {
-          if (arguments.callee(child, mixin, win)) {
+        } else if (arguments.callee(child, mixin, win)) {
             return true;
           }
-        }
       }
 
       return false;

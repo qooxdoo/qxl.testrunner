@@ -21,8 +21,7 @@
  */
 qx.Mixin.define("qxl.testrunner.view.MPerformance", {
 
-  construct : function()
-  {
+  construct : function() {
     this.__measurements = [];
   },
 

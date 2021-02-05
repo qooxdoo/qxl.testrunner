@@ -29,8 +29,7 @@ qx.Class.define("qxl.testrunner.test.Performance",
   {
     ITERATIONS : 42,
 
-    testSingle : function()
-    {
+    testSingle : function() {
       var displayIterations = 23;
       var that = this;
       this.measure(
@@ -41,7 +40,7 @@ qx.Class.define("qxl.testrunner.test.Performance",
         // callback containing the code to be measured
         function() {
           // work, work, work...
-          that.info("let's pretend we did this " + displayIterations + " times")
+          that.info("let's pretend we did this " + displayIterations + " times");
         },
 
         // finalize function (cleanup, etc.) - time spent here is *not* measured
@@ -54,8 +53,7 @@ qx.Class.define("qxl.testrunner.test.Performance",
         displayIterations);
     },
 
-    testRepeated : function()
-    {
+    testRepeated : function() {
       var that = this;
       this.measureRepeated(
 

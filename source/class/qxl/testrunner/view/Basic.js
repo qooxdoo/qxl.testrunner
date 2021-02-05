@@ -31,8 +31,7 @@ qx.Class.define("qxl.testrunner.view.Basic", {
     /**
      * Tells the TestRunner to run all configured tests.
      */
-    run : function()
-    {
+    run : function() {
       this.__testResults = {};
       this.fireEvent("runTests");
     },
@@ -41,8 +40,7 @@ qx.Class.define("qxl.testrunner.view.Basic", {
     /**
      * Tells the TestRunner to stop running any pending tests.
      */
-    stop : function()
-    {
+    stop : function() {
       this.fireEvent("stopTests");
     },
 
@@ -53,8 +51,7 @@ qx.Class.define("qxl.testrunner.view.Basic", {
      *
      * @return {String} Results summary
      */
-    getSummary : function()
-    {
+    getSummary : function() {
       var count = {
         pass : 0,
         fail : 0,
@@ -62,7 +59,7 @@ qx.Class.define("qxl.testrunner.view.Basic", {
       };
       for (var test in this.__testResults) {
         var state = this.__testResults[test].state;
-        switch(state) {
+        switch (state) {
           case "success":
             count.pass += 1;
             break;
@@ -74,8 +71,8 @@ qx.Class.define("qxl.testrunner.view.Basic", {
         }
       }
 
-      return count.pass + " passed, " + count.fail + " failed, " + count.skip
-      + " skipped.";
+      return count.pass + " passed, " + count.fail + " failed, " + count.skip +
+      " skipped.";
     },
 
     /**
@@ -84,8 +81,7 @@ qx.Class.define("qxl.testrunner.view.Basic", {
      * @param value {String} New status value
      * @param old {String} Previous status value
      */
-    _applyStatus : function(value, old)
-    {
+    _applyStatus : function(value, old) {
       if (!value[0] || (value === old)) {
         return;
       }
@@ -96,42 +92,39 @@ qx.Class.define("qxl.testrunner.view.Basic", {
 
     /**
      * Log the test suite's current status.
-     *
      * @param value {String} New testSuiteState
      * @param value {String} Previous testSuiteState
+     * @param old
      */
-    _applyTestSuiteState : function(value, old)
-    {
-      switch(value)
-      {
+    _applyTestSuiteState : function(value, old) {
+      switch (value) {
         case "init":
           this.setStatus("Waiting for tests");
           break;
-        case "loading" :
+        case "loading":
           this.setStatus("Loading tests...");
           break;
-        case "ready" :
+        case "ready":
           this.setStatus(this.getSelectedTests().length + " tests ready");
           break;
-        case "error" :
+        case "error":
           this.setStatus("Error loading test suite or no tests in suite!");
           break;
-        case "running" :
+        case "running":
           this.setStatus("Running tests...");
           break;
-        case "finished" :
+        case "finished":
           this.setStatus("Test suite finished.");
           this.info(this.getSummary());
           break;
-        case "aborted" :
+        case "aborted":
           this.setStatus("Test run aborted");
           break;
       }
     },
 
 
-    _applyTestModel : function(value, old)
-    {
+    _applyTestModel : function(value, old) {
       if (!value) {
         return;
       }
@@ -140,8 +133,7 @@ qx.Class.define("qxl.testrunner.view.Basic", {
     },
 
 
-    _applyTestCount : function(value, old)
-    {},
+    _applyTestCount : function(value, old) {},
 
     /**
      * Logs state changes in testResultData objects.
@@ -149,8 +141,7 @@ qx.Class.define("qxl.testrunner.view.Basic", {
      * @param testResultData {qxl.testrunner.unit.TestResultData} Test result data
      * object
      */
-    _onTestChangeState : function(testResultData)
-    {
+    _onTestChangeState : function(testResultData) {
       var testName = testResultData.getFullName();
       var state = testResultData.getState();
       var exceptions = testResultData.getExceptions();
@@ -163,18 +154,17 @@ qx.Class.define("qxl.testrunner.view.Basic", {
       if (exceptions) {
         this.__testResults[testName].exceptions = exceptions;
         var messages = [];
-        for (var i=0,l=exceptions.length; i<l; i++) {
+        for (var i=0, l=exceptions.length; i<l; i++) {
           var message = exceptions[i].exception.toString() + "\n";
           //message += testResultData.getStackTrace(exceptions[i].exception);
           messages.push(message);
         }
         this.__testResults[testName].messages = messages;
-
       }
 
       var level;
       var msg;
-      switch(state) {
+      switch (state) {
         case "start":
           level = "debug";
           msg = "RESUME";
@@ -222,8 +212,7 @@ qx.Class.define("qxl.testrunner.view.Basic", {
      * state (The test's result) and (if applicable) exceptions (array of errors
      * that occured during the test's run).
      */
-    getTestResults : function(exceptions)
-    {
+    getTestResults : function(exceptions) {
       if (exceptions) {
         return this.__testResults;
       }

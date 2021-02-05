@@ -46,8 +46,7 @@ qx.Class.define("qxl.testrunner.TestLoader",
 
   members :
   {
-    main : function()
-    {
+    main : function() {
       qxl.testrunner.TestLoader.instance = this;
       this.base(arguments);
     }

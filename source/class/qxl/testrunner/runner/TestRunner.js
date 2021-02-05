@@ -30,9 +30,8 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
      CONSTRUCTOR
   *****************************************************************************
   */
-  construct : function()
-  {
-    this.TEST_MIXINS  = [qx.dev.unit.MMock, qx.dev.unit.MRequirements];
+  construct : function() {
+    this.TEST_MIXINS = [qx.dev.unit.MMock, qx.dev.unit.MRequirements];
     if (qx.core.Environment.get("qxl.testrunner.performance")) {
       this.TEST_MIXINS.push(qx.dev.unit.MMeasure);
     }
@@ -76,9 +75,8 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
     TEST_MIXINS : null,
 
 
-    _loadTests : function()
-    {
-      switch(this._origin) {
+    _loadTests : function() {
+      switch (this._origin) {
         case "iframe":
           // Load the tests from a standalone AUT
           this.__iframe = this.view.getIframe();
@@ -115,8 +113,7 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
             window.setTimeout(function() {
               boundEvtFunc({data : "html/tests-source.html"});
             }, 1000);
-          }
-          else if (pushType == "code") {
+          } else if (pushType == "code") {
             var req = new qx.io.request.Xhr("../build/script/tests.js");
             req.addListener("success", function(e) {
               var test = req.getResponse();
@@ -142,8 +139,7 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
      *
      * @param nameSpace {String|Object} Test namespace to be loaded
      */
-    _loadInlineTests : function(nameSpace)
-    {
+    _loadInlineTests : function(nameSpace) {
       nameSpace = nameSpace || this._testNameSpace;
       this.setTestSuiteState("loading");
       this.loader = new qx.dev.unit.TestLoaderInline();
@@ -154,8 +150,7 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
 
 
     // overridden
-    _defineTestClass : function(testClassName, membersMap)
-    {
+    _defineTestClass : function(testClassName, membersMap) {
       var qxClass = qx.Class;
       var classDef = {
         extend : qx.dev.unit.TestCase,
@@ -176,12 +171,10 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
     },
 
 
-    _getTestResult : function()
-    {
+    _getTestResult : function() {
       if (this._origin == "iframe" || this._origin == "push") {
         var frameWindow = qx.bom.Iframe.getWindow(this.__iframe);
         var testResult = new frameWindow.qx.dev.unit.TestResult();
-
       } else {
         var testResult = new qx.dev.unit.TestResult();
       }
@@ -207,8 +200,7 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
      *
      * @lint ignoreDeprecated(alert)
      */
-    _onLoadIframe : function(ev)
-    {
+    _onLoadIframe : function(ev) {
       if (ev && ev.getType() == "load") {
         this.setTestSuiteState("loading");
       }
@@ -220,14 +212,12 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
 
       this.frameWindow = qx.bom.Iframe.getWindow(this.__iframe);
 
-      if (this.__loadTimer)
-      {
+      if (this.__loadTimer) {
         this.__loadTimer.stop();
         this.__loadTimer = null;
       }
 
       if (this.__loadAttempts <= 300) {
-
         // Detect failure to access frame after some period of time
         if (!this.frameWindow.body) {
           if (this.__loadAttempts >= 20 && window.location.protocol == "file:") {
@@ -260,8 +250,7 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
           this.__loadTimer = qx.event.Timer.once(this._onLoadIframe, this, 100);
           return;
         }
-      }
-      else {
+      } else {
         this.setTestSuiteState("error");
         this.__loadAttempts = 0;
         return;
@@ -293,13 +282,11 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
     /**
      * Retrieves the AUT's log messages and writes them to the current appender.
      */
-    __fetchIframeLog : function()
-    {
+    __fetchIframeLog : function() {
       var w = qx.bom.Iframe.getWindow(this.__iframe);
 
       var logger;
-      if (w.qx && w.qx.log && w.qx.log.Logger)
-      {
+      if (w.qx && w.qx.log && w.qx.log.Logger) {
         logger = w.qx.log.Logger;
         if (this.view.getLogLevel) {
           logger.setLevel(this.view.getLogLevel());
@@ -312,8 +299,7 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
     }
   },
 
-  destruct : function()
-  {
+  destruct : function() {
     this._disposeObjects("__logAppender", "__loadTimer");
     this.__iframe = null;
     delete this.__iframe;

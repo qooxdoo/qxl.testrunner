@@ -31,15 +31,13 @@ qx.Class.define("qxl.testrunner.view.Console", {
   *****************************************************************************
   */
 
-  construct : function()
-  {
+  construct : function() {
     qx.log.appender.Native;
     qx.log.appender.Console;
 
     if (!qx.core.Environment.get("qx.debug") &&
-      qx.core.Environment.get("qxl.testrunner.testOrigin") == "external")
-    {
-      qx.bom.Stylesheet.createElement('%{Styles}');
+      qx.core.Environment.get("qxl.testrunner.testOrigin") == "external") {
+      qx.bom.Stylesheet.createElement("%{Styles}");
     }
 
     // Workaround for http://bugzilla.qooxdoo.org/show_bug.cgi?id=8242
@@ -66,8 +64,7 @@ qx.Class.define("qxl.testrunner.view.Console", {
     /**
      * Tells the TestRunner to run all configured tests.
      */
-    run : function()
-    {
+    run : function() {
       this.__suiteResults = {
         startedAt : new Date().getTime(),
         finishedAt : null,
@@ -79,8 +76,7 @@ qx.Class.define("qxl.testrunner.view.Console", {
     /**
      * Tells the TestRunner to stop running any pending tests.
      */
-    stop : function()
-    {
+    stop : function() {
       this.fireEvent("stopTests");
     },
 
@@ -91,8 +87,7 @@ qx.Class.define("qxl.testrunner.view.Console", {
      * @param value {String} New status value
      * @param old {String} Previous status value
      */
-    _applyStatus : function(value, old)
-    {
+    _applyStatus : function(value, old) {
       if (!value[0] || (value === old)) {
         return;
       }
@@ -103,42 +98,39 @@ qx.Class.define("qxl.testrunner.view.Console", {
 
     /**
      * Log the test suite's current status.
-     *
      * @param value {String} New testSuiteState
      * @param value {String} Previous testSuiteState
+     * @param old
      */
-    _applyTestSuiteState : function(value, old)
-    {
-      switch(value)
-      {
+    _applyTestSuiteState : function(value, old) {
+      switch (value) {
         case "init":
           this.setStatus("Waiting for tests");
           break;
-        case "loading" :
+        case "loading":
           this.setStatus("Loading tests...");
           break;
-        case "ready" :
+        case "ready":
           this.setStatus(this.getSelectedTests().length + " tests ready. Call qx.core.Init.getApplication().runner.view.run() to start.");
           break;
-        case "error" :
+        case "error":
           this.setStatus("Couldn't load test suite!");
           break;
-        case "running" :
+        case "running":
           this.setStatus("Running tests...");
           break;
-        case "finished" :
+        case "finished":
           this.__suiteResults.finishedAt = new Date().getTime();
           this.setStatus("Test suite finished. Call qx.core.Init.getApplication().runner.view.getTestResults() to get the results.");
           break;
-        case "aborted" :
+        case "aborted":
           this.setStatus("Test run aborted");
           break;
-      };
+      }
     },
 
 
-    _applyTestModel : function(value, old)
-    {
+    _applyTestModel : function(value, old) {
       if (!value) {
         return;
       }
@@ -147,8 +139,7 @@ qx.Class.define("qxl.testrunner.view.Console", {
     },
 
 
-    _applyTestCount : function(value, old)
-    {},
+    _applyTestCount : function(value, old) {},
 
     /**
      * Logs state changes in testResultData objects.
@@ -156,8 +147,7 @@ qx.Class.define("qxl.testrunner.view.Console", {
      * @param testResultData {qxl.testrunner.unit.TestResultData} Test result data
      * object
      */
-    _onTestChangeState : function(testResultData)
-    {
+    _onTestChangeState : function(testResultData) {
       var testName = testResultData.getFullName();
       var state = testResultData.getState();
 
@@ -171,7 +161,7 @@ qx.Class.define("qxl.testrunner.view.Console", {
 
       if (exceptions) {
         this.__suiteResults.tests[testName].exceptions = [];
-        for (var i=0,l=exceptions.length; i<l; i++) {
+        for (var i=0, l=exceptions.length; i<l; i++) {
           var ex = exceptions[i].exception;
           var type = ex.classname || ex.type || "Error";
 
@@ -197,7 +187,7 @@ qx.Class.define("qxl.testrunner.view.Console", {
       }
 
       var level;
-      switch(state) {
+      switch (state) {
         case "skip":
           level = "warn";
           break;
@@ -226,8 +216,7 @@ qx.Class.define("qxl.testrunner.view.Console", {
      * state (The test's result) and (if applicable) exceptions (array of errors
      * that occured during the test's run).
      */
-    getTestResults : function(exceptions)
-    {
+    getTestResults : function(exceptions) {
       if (!(this.__suiteResults && this.__suiteResults.tests)) {
         throw new Error("No results to get. Run the test suite first.");
       }
@@ -243,7 +232,7 @@ qx.Class.define("qxl.testrunner.view.Console", {
           if (res[key].exceptions) {
             var exceptions = res[key].exceptions;
             var messages = [];
-            for (var i=0,l=exceptions.length; i<l; i++) {
+            for (var i=0, l=exceptions.length; i<l; i++) {
               var exMap = exceptions[i];
               var message = exMap.type + ": " + exMap.message;
               if (exMap.stacktrace) {
@@ -265,8 +254,7 @@ qx.Class.define("qxl.testrunner.view.Console", {
      *
      * @return {Map} Test suite results
      */
-    getSuiteResults : function()
-    {
+    getSuiteResults : function() {
       return this.__suiteResults;
     },
 
@@ -275,8 +263,7 @@ qx.Class.define("qxl.testrunner.view.Console", {
      *
      * @return {DOMElement} The iframe
      */
-    getIframe : function()
-    {
+    getIframe : function() {
       if (!this.__iframe) {
         this.__iframe = qx.bom.Iframe.create();
         document.body.appendChild(this.__iframe);
@@ -291,14 +278,12 @@ qx.Class.define("qxl.testrunner.view.Console", {
      * @param value {String} AUT URI
      * @param old {String} Previous value
      */
-    _applyAutUri : function(value, old)
-    {
+    _applyAutUri : function(value, old) {
       qx.bom.Iframe.setSource(this.getIframe(), value);
     }
   },
 
-  destruct : function()
-  {
+  destruct : function() {
     this._disposeMap("testResults");
     this.__iframe = null;
     delete this.__iframe;

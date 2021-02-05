@@ -19,8 +19,7 @@
  */
 qx.Mixin.define("qxl.testrunner.view.MAutoRun", {
 
-  construct : function()
-  {
+  construct : function() {
     var parsedUri = qx.util.Uri.parseUri(location.href, true);
     if (parsedUri.queryKey && parsedUri.queryKey.autorun) {
       this.setAutoRun(true);

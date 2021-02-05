@@ -51,8 +51,7 @@ qx.Class.define("qxl.testrunner.TestLoaderInline",
      *
      * @return {void}
      */
-    main : function()
-    {
+    main : function() {
       qxl.testrunner.TestLoader.instance = this;
       this.base(arguments);
     }
