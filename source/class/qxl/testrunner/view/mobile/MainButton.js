@@ -1,23 +1,23 @@
 qx.Class.define("qxl.testrunner.view.mobile.MainButton", {
+  extend: qx.ui.mobile.form.Button,
 
-  extend : qx.ui.mobile.form.Button,
-
-  construct : function(label, icon) {
-    this.base(arguments, label, icon);
-    qx.bom.element.Class.replace(this.getContentElement(), "button", "navigationbar-backbutton");
+  construct(label, icon) {
+    super(label, icon);
+    qx.bom.element.Class.replace(
+      this.getContentElement(),
+      "button",
+      "navigationbar-backbutton"
+    );
   },
 
-  properties :
-  {
-    state :
-    {
-      apply : "_applyState"
-    }
+  properties: {
+    state: {
+      apply: "_applyState",
+    },
   },
 
-  members :
-  {
-    _applyState : function(value) {
+  members: {
+    _applyState(value) {
       var el = this.getContentElement();
       var cls = qx.bom.element.Class;
       cls.removeClasses(el, ["runbutton", "stopbutton"]);
@@ -47,6 +47,6 @@ qx.Class.define("qxl.testrunner.view.mobile.MainButton", {
           this.setValue("Run");
           cls.add(el, "runbutton");
       }
-    }
-  }
+    },
+  },
 });

@@ -21,27 +21,27 @@
  * of the test suite's state.
  */
 qx.Class.define("qxl.testrunner.runner.TestRunner", {
-
-  extend : qxl.testrunner.runner.TestRunnerBasic,
-
+  extend: qxl.testrunner.runner.TestRunnerBasic,
 
   /*
   *****************************************************************************
      CONSTRUCTOR
   *****************************************************************************
   */
-  construct : function() {
+  construct() {
     this.TEST_MIXINS = [qx.dev.unit.MMock, qx.dev.unit.MRequirements];
     if (qx.core.Environment.get("qxl.testrunner.performance")) {
       this.TEST_MIXINS.push(qx.dev.unit.MMeasure);
     }
 
     if (qx.core.Environment.get("qxl.testrunner.reportServer")) {
-      var viewClass = qx.Class.getByName(qx.core.Environment.get("qxl.testrunner.view"));
+      var viewClass = qx.Class.getByName(
+        qx.core.Environment.get("qxl.testrunner.view")
+      );
       qx.Class.include(viewClass, qxl.testrunner.view.MReportResult);
     }
 
-    this.base(arguments);
+    super();
 
     // Get log appender element from view
     if (this.view.getLogAppenderElement) {
@@ -55,32 +55,34 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
     }
   },
 
-
   /*
   *****************************************************************************
      MEMBERS
   *****************************************************************************
   */
 
-  members :
-  {
-    origin : null,
-    __iframe : null,
-    frameWindow : null,
-    __loadAttempts : null,
-    __loadTimer : null,
-    __logAppender : null,
-    _externalTestClasses : null,
+  members: {
+    origin: null,
+    __iframe: null,
+    frameWindow: null,
+    __loadAttempts: null,
+    __loadTimer: null,
+    __logAppender: null,
+    _externalTestClasses: null,
 
-    TEST_MIXINS : null,
+    TEST_MIXINS: null,
 
-
-    _loadTests : function() {
+    _loadTests() {
       switch (this._origin) {
         case "iframe":
           // Load the tests from a standalone AUT
           this.__iframe = this.view.getIframe();
-          qx.event.Registration.addListener(this.__iframe, "load", this._onLoadIframe, this);
+          qx.event.Registration.addListener(
+            this.__iframe,
+            "load",
+            this._onLoadIframe,
+            this
+          );
           var src = qx.core.Environment.get("qx.testPageUri");
           src += "?testclass=" + this._testNameSpace;
           this.setTestSuiteState("loading");
@@ -100,9 +102,14 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
             this.__iframe = this.view.getIframe();
             this.frameWindow = qx.bom.Iframe.getWindow(this.__iframe);
 
-            var evtFunc = function(event) {
+            var evtFunc = function (event) {
               // Load the tests from a standalone AUT
-              qx.event.Registration.addListener(this.__iframe, "load", this._onLoadIframe, this);
+              qx.event.Registration.addListener(
+                this.__iframe,
+                "load",
+                this._onLoadIframe,
+                this
+              );
               var src = event.data + "?testclass=" + this._testNameSpace;
               this.setTestSuiteState("loading");
               this.view.setAutUri(src);
@@ -110,36 +117,41 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
 
             var boundEvtFunc = evtFunc.bind(this);
 
-            window.setTimeout(function() {
-              boundEvtFunc({data : "html/tests-source.html"});
+            window.setTimeout(function () {
+              boundEvtFunc({ data: "html/tests-source.html" });
             }, 1000);
           } else if (pushType == "code") {
             var req = new qx.io.request.Xhr("../build/script/tests.js");
-            req.addListener("success", function(e) {
-              var test = req.getResponse();
-              this.__iframe = this.view.getIframe();
-              var doc = qx.bom.Iframe.getDocument(this.__iframe);
-              var el =doc.createElement("script");
-              el.text = test;
-              doc.getElementsByTagName("head")[0].appendChild(el);
+            req.addListener(
+              "success",
+              function (e) {
+                var test = req.getResponse();
+                this.__iframe = this.view.getIframe();
+                var doc = qx.bom.Iframe.getDocument(this.__iframe);
+                var el = doc.createElement("script");
+                el.text = test;
+                doc.getElementsByTagName("head")[0].appendChild(el);
 
-              this.loader = qx.bom.Iframe.getWindow(this.__iframe).qxl.testrunner.TestLoader.getInstance();
-              this.loader.setTestNamespace(this._testNameSpace);
-              this._wrapAssertions(this.frameWindow);
-              this._getTestModel();
-            }, this);
+                this.loader = qx.bom.Iframe.getWindow(
+                  this.__iframe
+                ).qxl.testrunner.TestLoader.getInstance();
+                this.loader.setTestNamespace(this._testNameSpace);
+                this._wrapAssertions(this.frameWindow);
+                this._getTestModel();
+              },
+              this
+            );
             req.send();
           }
       }
     },
-
 
     /**
      * Loads test classes that are a part of the TestRunner application.
      *
      * @param nameSpace {String|Object} Test namespace to be loaded
      */
-    _loadInlineTests : function(nameSpace) {
+    _loadInlineTests(nameSpace) {
       nameSpace = nameSpace || this._testNameSpace;
       this.setTestSuiteState("loading");
       this.loader = new qx.dev.unit.TestLoaderInline();
@@ -148,30 +160,28 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
       this._getTestModel();
     },
 
-
     // overridden
-    _defineTestClass : function(testClassName, membersMap) {
+    _defineTestClass(testClassName, membersMap) {
       var qxClass = qx.Class;
       var classDef = {
-        extend : qx.dev.unit.TestCase,
-        members : membersMap
+        extend: qx.dev.unit.TestCase,
+        members: membersMap,
       };
+
       if (this.TEST_MIXINS) {
         classDef.include = this.TEST_MIXINS;
       }
       return qxClass.define(testClassName, classDef);
     },
 
-
-    _runTests : function() {
+    _runTests() {
       if (this.__logAppender) {
         this.__logAppender.clear();
       }
-      this.base(arguments);
+      super._runTests();
     },
 
-
-    _getTestResult : function() {
+    _getTestResult() {
       if (this._origin == "iframe" || this._origin == "push") {
         var frameWindow = qx.bom.Iframe.getWindow(this.__iframe);
         var testResult = new frameWindow.qx.dev.unit.TestResult();
@@ -181,17 +191,15 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
       return testResult;
     },
 
-
-    _onTestEnd : function(ev) {
+    _onTestEnd(ev) {
       if (this._origin == "iframe" || this._origin == "push") {
         if (this.__logAppender) {
           this.__fetchIframeLog();
         }
       }
 
-      this.base(arguments);
+      super._onTestEnd();
     },
-
 
     /**
      * Waits until the test application in the iframe has finished loading, then
@@ -200,7 +208,7 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
      *
      * @lint ignoreDeprecated(alert)
      */
-    _onLoadIframe : function(ev) {
+    _onLoadIframe(ev) {
       if (ev && ev.getType() == "load") {
         this.setTestSuiteState("loading");
       }
@@ -220,11 +228,16 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
       if (this.__loadAttempts <= 300) {
         // Detect failure to access frame after some period of time
         if (!this.frameWindow.body) {
-          if (this.__loadAttempts >= 20 && window.location.protocol == "file:") {
-            alert("Failed to load application from the file system.\n\n" +
-                  "The security settings of your browser may prohibit to access " +
-                  "frames loaded using the file protocol. Please try the http " +
-                  "protocol instead.");
+          if (
+            this.__loadAttempts >= 20 &&
+            window.location.protocol == "file:"
+          ) {
+            alert(
+              "Failed to load application from the file system.\n\n" +
+                "The security settings of your browser may prohibit to access " +
+                "frames loaded using the file protocol. Please try the http " +
+                "protocol instead."
+            );
 
             // Quit
             this.setTestSuiteState("error");
@@ -258,7 +271,9 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
 
       this.__loadAttempts = 0;
 
-      var frameParts = this.frameWindow.qx.core.Environment.get("qxl.testrunner.testParts");
+      var frameParts = this.frameWindow.qx.core.Environment.get(
+        "qxl.testrunner.testParts"
+      );
       if (frameParts instanceof this.frameWindow.Boolean) {
         frameParts = frameParts.valueOf();
       }
@@ -278,11 +293,10 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
       this._getTestModel();
     },
 
-
     /**
      * Retrieves the AUT's log messages and writes them to the current appender.
      */
-    __fetchIframeLog : function() {
+    __fetchIframeLog() {
       var w = qx.bom.Iframe.getWindow(this.__iframe);
 
       var logger;
@@ -296,15 +310,14 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
         logger.clear();
         logger.unregister(this.__logAppender);
       }
-    }
+    },
   },
 
-  destruct : function() {
+  destruct() {
     this._disposeObjects("__logAppender", "__loadTimer");
     this.__iframe = null;
     delete this.__iframe;
     this.frameWindow = null;
     delete this.frameWindow;
-  }
-
+  },
 });

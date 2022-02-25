@@ -19,61 +19,60 @@
 /**
  * Performance test examples.
  */
-qx.Class.define("qxl.testrunner.test.Performance",
-{
-  extend : qx.dev.unit.TestCase,
+qx.Class.define("qxl.testrunner.test.Performance", {
+  extend: qx.dev.unit.TestCase,
 
-  include : qx.dev.unit.MMeasure,
+  include: qx.dev.unit.MMeasure,
 
-  members :
-  {
-    ITERATIONS : 42,
+  members: {
+    ITERATIONS: 42,
 
-    testSingle : function() {
+    testSingle() {
       var displayIterations = 23;
       var that = this;
       this.measure(
-
         // descriptive message
         "do one thing",
 
         // callback containing the code to be measured
-        function() {
+        function () {
           // work, work, work...
-          that.info("let's pretend we did this " + displayIterations + " times");
+          that.info(
+            "let's pretend we did this " + displayIterations + " times"
+          );
         },
 
         // finalize function (cleanup, etc.) - time spent here is *not* measured
-        function() {
+        function () {
           that.info("Finalizing.");
         },
 
         // number of iterations to show in the results, e.g. the amount of times
         // a loop within the callback is executed
-        displayIterations);
+        displayIterations
+      );
     },
 
-    testRepeated : function() {
+    testRepeated() {
       var that = this;
       this.measureRepeated(
-
         // descriptive message
         "do some useful stuff " + this.ITERATIONS + " times",
 
         // callback containing the code to be measured
-        function(iteration) {
+        function (iteration) {
           // work, work, work...
           that.info(iteration, " iterations left to do");
         },
 
         // finalize function (cleanup, etc.) - time spent here is *not* measured
-        function() {
+        function () {
           that.info("Finalizing.");
         },
 
         // Amount of times the callback function will be called
         this.ITERATIONS
       );
-    }
-  }
+    },
+  },
 });

@@ -17,28 +17,26 @@
 ************************************************************************ */
 
 qx.Class.define("qxl.testrunner.test.basic.BasicTest", {
+  extend: qx.dev.unit.TestCase,
 
-  extend : qx.dev.unit.TestCase,
+  include: [qx.dev.unit.MRequirementsBasic],
 
-  include : [qx.dev.unit.MRequirementsBasic],
-
-  members :
-  {
-    testSuccess : function() {
-      this.assertEquals(4, 3+1, "This should never fail!");
+  members: {
+    testSuccess() {
+      this.assertEquals(4, 3 + 1, "This should never fail!");
       this.assertFalse(false, "Can false be true?!");
     },
 
-    testFail: function () {
+    testFail() {
       this.assertTrue(false, "Well, what did you expect?");
     },
 
-    hasNodeJs : function() {
+    hasNodeJs() {
       return qx.core.Environment.get("runtime.name") == "node.js";
     },
 
-    testNodeJs : function() {
+    testNodeJs() {
       this.require(["nodeJs"]);
-    }
-  }
+    },
+  },
 });

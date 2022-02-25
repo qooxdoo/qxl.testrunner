@@ -24,39 +24,42 @@
  * @asset(testrunner/view/mobile/*)
  */
 qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
+  extend: qxl.testrunner.view.Abstract,
 
-  extend : qxl.testrunner.view.Abstract,
-
-  construct : function() {
+  construct() {
     this._initPage();
   },
 
-  members :
-  {
-    __mainPage : null,
-    __detailPage : null,
-    __mainButton : null,
-    __iframe : null,
-    __testList : null,
-    __testListWidget : null,
-    __testRows : null,
-    __statusLabel : null,
-    __suiteResults : null,
+  members: {
+    __mainPage: null,
+    __detailPage: null,
+    __mainButton: null,
+    __iframe: null,
+    __testList: null,
+    __testListWidget: null,
+    __testRows: null,
+    __statusLabel: null,
+    __suiteResults: null,
 
     /**
      * Run the suite, or stop a running suite.
      */
-    _onMainButtonTap : function() {
+    _onMainButtonTap() {
       var suiteState = this.getTestSuiteState();
-      if (suiteState == "ready" || suiteState == "finished" || suiteState == "aborted") {
+      if (
+        suiteState == "ready" ||
+        suiteState == "finished" ||
+        suiteState == "aborted"
+      ) {
         if (suiteState == "finished" || suiteState == "aborted") {
           this._clearResults();
         }
         this.__suiteResults = {
-          startedAt : new Date().getTime(),
-          finishedAt : null,
-          tests : {}
+          startedAt: new Date().getTime(),
+          finishedAt: null,
+          tests: {},
         };
+
         this.fireEvent("runTests");
       } else if (suiteState == "running") {
         this.fireEvent("stopTests");
@@ -66,34 +69,49 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
     /**
      * Creates the main and detail pages
      */
-    _initPage : function() {
+    _initPage() {
       this.__testRows = {};
-      var mainPage = this.__mainPage = new qx.ui.mobile.page.NavigationPage();
+      var mainPage = (this.__mainPage = new qx.ui.mobile.page.NavigationPage());
       mainPage.setTitle("qx Test Runner");
 
-      var mainButton = this.__mainButton = new qxl.testrunner.view.mobile.MainButton();
+      var mainButton = (this.__mainButton =
+        new qxl.testrunner.view.mobile.MainButton());
       mainButton.addListener("tap", this._onMainButtonTap, this);
       mainPage.getRightContainer().add(mainButton);
 
-      mainPage.addListener("initialize", function() {
-        this.__testRows = {};
-        var list = this.__testListWidget = new qx.ui.mobile.list.List({
-          configureItem : this._configureListItem.bind(this)
-        });
-        list.addListener("changeSelection", this._onListChangeSelection, this);
-        mainPage.getContent().add(list);
+      mainPage.addListener(
+        "initialize",
+        function () {
+          this.__testRows = {};
+          var list = (this.__testListWidget = new qx.ui.mobile.list.List({
+            configureItem: this._configureListItem.bind(this),
+          }));
 
-        var statusBar = this._getStatusBar();
-        mainPage.add(statusBar);
-      }, this);
+          list.addListener(
+            "changeSelection",
+            this._onListChangeSelection,
+            this
+          );
+          mainPage.getContent().add(list);
 
-      var detailPage = this.__detailPage = new qx.ui.mobile.page.NavigationPage();
+          var statusBar = this._getStatusBar();
+          mainPage.add(statusBar);
+        },
+        this
+      );
+
+      var detailPage = (this.__detailPage =
+        new qx.ui.mobile.page.NavigationPage());
       detailPage.setShowBackButton(true);
       detailPage.setBackButtonText("Back");
       detailPage.setTitle("Result Details");
-      detailPage.addListener("back", function() {
-        mainPage.show({animation:"slide", reverse:true});
-      }, this);
+      detailPage.addListener(
+        "back",
+        function () {
+          mainPage.show({ animation: "slide", reverse: true });
+        },
+        this
+      );
 
       // Add the pages to the page manager.
       var manager = new qx.ui.mobile.page.Manager(false);
@@ -110,7 +128,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      * @param data {qx.core.Object} Model item
      * @param row {Integer} Index of the item's list row
      */
-    _configureListItem : function(item, data, row) {
+    _configureListItem(item, data, row) {
       if (!data) {
         return;
       }
@@ -120,11 +138,17 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
       //data.bind("state", item, "subtitle");
 
       var el = item.getContentElement();
-      qx.bom.element.Class.removeClasses(el, ["start", "success", "failure", "skip"]);
+      qx.bom.element.Class.removeClasses(el, [
+        "start",
+        "success",
+        "failure",
+        "skip",
+      ]);
       var testState = data.getState();
       var hasExceptions = data.getExceptions().length > 0;
 
-      var cssClass; var selectable;
+      var cssClass;
+      var selectable;
       var subtitle = "<strong>" + testState + "</strong>";
       switch (testState) {
         case "start":
@@ -161,7 +185,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
 
       item.setTitle(data.getFullName());
       var self = this;
-      data.addListener("changeState", function(ev) {
+      data.addListener("changeState", function (ev) {
         var idx = self.__testRows[this.getFullName()];
         // Force the list to update by re-applying the model
         self.__testListWidget.getModel().setItem(idx, null);
@@ -175,10 +199,15 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      * @param exceptions {Map[]} List of exception maps
      * @return {String} Exception summary
      */
-    _getExceptionSummary : function(exceptions) {
-      return exceptions.map(function(ex) {
-        return (ex.exception.message || ex.exception.toString()).replace(/\n/g, "<br/>");
-      }).join("<br/>");
+    _getExceptionSummary(exceptions) {
+      return exceptions
+        .map(function (ex) {
+          return (ex.exception.message || ex.exception.toString()).replace(
+            /\n/g,
+            "<br/>"
+          );
+        })
+        .join("<br/>");
     },
 
     /**
@@ -186,8 +215,10 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      *
      * @return  {qx.ui.mobile.form.Group} Group widget
      */
-    _getStatusBar : function() {
-      var statusBar = new qx.ui.mobile.container.Composite(new qx.ui.mobile.layout.HBox());
+    _getStatusBar() {
+      var statusBar = new qx.ui.mobile.container.Composite(
+        new qx.ui.mobile.layout.HBox()
+      );
       var statusGroup = new qx.ui.mobile.form.Group([statusBar]);
       statusGroup.getContentElement().id = "statusgroup";
       this.__statusLabel = new qx.ui.mobile.basic.Label("Loading...");
@@ -200,16 +231,18 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      *
      * @return {Iframe} AUT Iframe element
      */
-    getIframe : function() {
+    getIframe() {
       if (!this.__iframe) {
         this.__iframe = qx.bom.Iframe.create({
           onload: "qx.event.handler.Iframe.onevent(this)",
-          id: "autframe"
+          id: "autframe",
         });
 
         var iframeWidget = new qx.ui.mobile.core.Widget();
         iframeWidget.getContentElement().appendChild(this.__iframe);
-        this.__mainPage.getContent().addAfter(iframeWidget, this.__testListWidget);
+        this.__mainPage
+          .getContent()
+          .addAfter(iframeWidget, this.__testListWidget);
       }
 
       return this.__iframe;
@@ -221,12 +254,12 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      * @param value {String} AUT URI
      * @param old {String} Previous value
      */
-    _applyAutUri : function(value, old) {
+    _applyAutUri(value, old) {
       if (!value || value == old) {
         return;
       }
 
-      var frame =this.getIframe();
+      var frame = this.getIframe();
       qx.bom.Iframe.setSource(frame, value);
     },
 
@@ -236,8 +269,8 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      * @param value {String} New status value (HTML supported)
      * @param old {String} Previous status value
      */
-    _applyStatus : function(value, old) {
-      if (!value[0] || (value === old)) {
+    _applyStatus(value, old) {
+      if (!value[0] || value === old) {
         return;
       }
 
@@ -250,7 +283,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      * @param value {String} Previous testSuiteState
      * @param old
      */
-    _applyTestSuiteState : function(value, old) {
+    _applyTestSuiteState(value, old) {
       switch (value) {
         case "init":
           this.setStatus("Waiting for tests");
@@ -259,7 +292,9 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
           this.setStatus("Loading tests...");
           break;
         case "ready":
-          this.setStatus(this.getSelectedTests().length + " tests ready to run.");
+          this.setStatus(
+            this.getSelectedTests().length + " tests ready to run."
+          );
           break;
         case "error":
           this.setStatus("Couldn't load test suite!");
@@ -280,14 +315,15 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
           this.setStatus("Test run aborted");
           break;
       }
+
       this.__mainButton.setState(value);
     },
 
     /**
      * Resets the state of all tests in the suite
      */
-    _clearResults : function() {
-      this.__testList.forEach(function(item, index, list) {
+    _clearResults() {
+      this.__testList.forEach(function (item, index, list) {
         item.setState("start");
         item.setExceptions([]);
       });
@@ -300,18 +336,21 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      * @param value {qx.core.Object} New test suite model
      * @param old {qx.core.Object} Old test suite model
      */
-    _applyTestModel : function(value, old) {
+    _applyTestModel(value, old) {
       if (!value) {
         return;
       }
-      this.__testList = qxl.testrunner.runner.ModelUtil.getItemsByProperty(value, "type", "test");
+      this.__testList = qxl.testrunner.runner.ModelUtil.getItemsByProperty(
+        value,
+        "type",
+        "test"
+      );
       this.__testList = new qx.data.Array(this.__testList);
       this.__testListWidget.setModel(this.__testList.concat());
       this.setSelectedTests(this.__testList);
     },
 
-
-    _applyTestCount : function(value, old) {},
+    _applyTestCount(value, old) {},
 
     /**
      * Reacts to state changes in testResultData objects.
@@ -319,7 +358,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      * @param testResultData {qxl.testrunner.unit.TestResultData} Test result data
      * object
      */
-    _onTestChangeState : function(testResultData) {
+    _onTestChangeState(testResultData) {
       var testName = testResultData.getFullName();
       var state = testResultData.getState();
 
@@ -333,21 +372,26 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
 
       if (exceptions) {
         this.__suiteResults.tests[testName].exceptions = [];
-        for (var i=0, l=exceptions.length; i<l; i++) {
+        for (var i = 0, l = exceptions.length; i < l; i++) {
           var ex = exceptions[i].exception;
           var type = ex.classname || ex.type || "Error";
 
-          var message = ex.toString ? ex.toString() :
-            ex.message ? ex.message : "Unknown Error";
+          var message = ex.toString
+            ? ex.toString()
+            : ex.message
+            ? ex.message
+            : "Unknown Error";
 
           var stacktrace;
-          if (!(ex.classname && ex.classname == "qx.dev.unit.MeasurementResult")) {
+          if (
+            !(ex.classname && ex.classname == "qx.dev.unit.MeasurementResult")
+          ) {
             stacktrace = testResultData.getStackTrace(ex);
           }
 
           var serializedEx = {
-            type : type,
-            message : message
+            type: type,
+            message: message,
           };
 
           if (stacktrace) {
@@ -364,7 +408,7 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      *
      * @return  {String} HTML-formatted summary
      */
-    _getSummary : function() {
+    _getSummary() {
       var pass = 0;
       var fail = 0;
       var skip = 0;
@@ -382,9 +426,20 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
         }
       }
 
-      return "<span class='failure'>" + fail + "</span>" + " failed, " +
-             "<span class='success'>" + pass + "</span>" + " passed, " +
-             "<span class='skip'>" + skip + "</span>" + " skipped.";
+      return (
+        "<span class='failure'>" +
+        fail +
+        "</span>" +
+        " failed, " +
+        "<span class='success'>" +
+        pass +
+        "</span>" +
+        " passed, " +
+        "<span class='skip'>" +
+        skip +
+        "</span>" +
+        " skipped."
+      );
     },
 
     /**
@@ -392,21 +447,28 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
      *
      * @param ev {qx.event.type.Data} The list's changeSelection event
      */
-    _onListChangeSelection : function(ev) {
+    _onListChangeSelection(ev) {
       this.__detailPage.removeAll();
-      var testName = qx.lang.Object.getKeyFromValue(this.__testRows, ev.getData());
-      for (var i=0, l=this.__testList.length; i<l; i++) {
+      var testName = qx.lang.Object.getKeyFromValue(
+        this.__testRows,
+        ev.getData()
+      );
+      for (var i = 0, l = this.__testList.length; i < l; i++) {
         if (this.__testList.getItem(i).getFullName() == testName) {
           var exceptions = this.__testList.getItem(i).getExceptions();
-          for (var x=0, y=exceptions.length; x<y; x++) {
+          for (var x = 0, y = exceptions.length; x < y; x++) {
             var ex = exceptions[x].exception;
             var msg = ex.toString ? ex.toString() : ex.message;
-            var stack = ex.getStackTrace ? ex.getStackTrace() : qx.dev.StackTrace.getStackTraceFromError(ex);
+            var stack = ex.getStackTrace
+              ? ex.getStackTrace()
+              : qx.dev.StackTrace.getStackTraceFromError(ex);
             var msgLabel = new qx.ui.mobile.basic.Label(msg);
             msgLabel.setWrap(true);
             var stackLabel = new qx.ui.mobile.basic.Label(stack.join("<br/>"));
             stackLabel.setWrap(true);
-            var detailContainer = new qx.ui.mobile.container.Composite(new qx.ui.mobile.layout.VBox());
+            var detailContainer = new qx.ui.mobile.container.Composite(
+              new qx.ui.mobile.layout.VBox()
+            );
             detailContainer.add(msgLabel);
             detailContainer.add(stackLabel);
             var detailGroup = new qx.ui.mobile.form.Group([detailContainer]);
@@ -418,6 +480,6 @@ qx.Class.define("qxl.testrunner.view.mobile.Mobile", {
           break;
         }
       }
-    }
-  }
+    },
+  },
 });

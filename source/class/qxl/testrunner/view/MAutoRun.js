@@ -18,21 +18,18 @@
  * and sets the autoRun property accordingly.
  */
 qx.Mixin.define("qxl.testrunner.view.MAutoRun", {
-
-  construct : function() {
+  construct() {
     var parsedUri = qx.util.Uri.parseUri(location.href, true);
     if (parsedUri.queryKey && parsedUri.queryKey.autorun) {
       this.setAutoRun(true);
     }
   },
 
-  properties :
-  {
+  properties: {
     /** Automatically run the selected tests after loading */
-    autoRun :
-    {
-      check :"Boolean",
-      init : false
-    }
-  }
+    autoRun: {
+      check: "Boolean",
+      init: false,
+    },
+  },
 });

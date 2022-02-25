@@ -18,50 +18,44 @@
  */
 
 qx.Class.define("qxl.testrunner.runner.TestItem", {
+  extend: qx.core.Object,
 
-  extend : qx.core.Object,
-
-  construct : function() {
-    this.base(arguments);
+  construct() {
+    super();
     this.$$test = this;
   },
 
-  properties :
-  {
+  properties: {
     /** The item's state. The state of a parent item reflects its children:
      *  If one or more children have "error" or "failure" states, so will the
      *  parent.
      */
-    state :
-    {
-      init : "start",
-      event : "changeState",
-      apply : "_applyState"
+    state: {
+      init: "start",
+      event: "changeState",
+      apply: "_applyState",
     },
 
     /**
      * The item's previous state. This is used to preserve the correct state value
      * for asynchronous tests that have an intermediate "wait" value.
      */
-    previousState :
-    {
-      nullable : true,
-      init : null
+    previousState: {
+      nullable: true,
+      init: null,
     },
 
     /**
      * Any exceptions caught during a test's execution.
      */
-    exceptions :
-    {
-      init : [],
-      nullable : true,
-      event : "changeExceptions"
-    }
+    exceptions: {
+      init: [],
+      nullable: true,
+      event: "changeExceptions",
+    },
   },
 
-  statics :
-  {
+  statics: {
     /**
      * Compare function for test model items.
      *
@@ -69,7 +63,7 @@ qx.Class.define("qxl.testrunner.runner.TestItem", {
      * @param bItem {qxl.testrunner.runner.TestItem} Second item
      * @return {Integer} Comparison result
      */
-    sortFunction : function(aItem, bItem) {
+    sortFunction(aItem, bItem) {
       var aType = aItem.getType();
       var bType = bItem.getType();
       // always sort packages before classes
@@ -89,18 +83,17 @@ qx.Class.define("qxl.testrunner.runner.TestItem", {
         return 1;
       }
       return 0;
-    }
+    },
   },
 
-  members :
-  {
+  members: {
     /**
      * Returns this instance. Workaround needed to bind each child item's state
      * to the parent's.
      *
      * @return {Object} This model object
      */
-    getModel : function() {
+    getModel() {
       return this.$$test;
     },
 
@@ -110,17 +103,16 @@ qx.Class.define("qxl.testrunner.runner.TestItem", {
      *
      * @return {String} The item's fully qualified name
      */
-    getFullName : function() {
+    getFullName() {
       return this.fullName;
     },
-
 
     /**
      * Return the item's type ("package", "class" or "test")
      *
      * @return {String} The item's type
      */
-    getType : function() {
+    getType() {
       var itemName = this.getName();
 
       if (itemName.indexOf("test") === 0 && itemName.length > 4) {
@@ -136,39 +128,36 @@ qx.Class.define("qxl.testrunner.runner.TestItem", {
       return "package";
     },
 
-
     /**
      * Sorts the item's children. Packages are always listed before classes.
      */
-    sortChildren : function() {
+    sortChildren() {
       this.getChildren().sort(qxl.testrunner.runner.TestItem.sortFunction);
     },
-
 
     /**
      * Serializes and returns any exceptions caught during the test's execution
      *
      * @return {String} Exceptions
      */
-    getMessage : qx.core.Environment.select("engine.name",
-    {
-      "default" : function() {
+    getMessage: qx.core.Environment.select("engine.name", {
+      default() {
         if (this.getExceptions() && this.getExceptions().length > 0) {
           var exceptions = this.getExceptions();
           var message = "";
-          for (var i=0, l=exceptions.length; i<l; i++) {
+          for (var i = 0, l = exceptions.length; i < l; i++) {
             message += exceptions[i].exception.toString() + " ";
           }
           return message;
-        } 
-          return "";
+        }
+        return "";
       },
 
-      "opera" : function() {
+      opera() {
         if (this.getExceptions() && this.getExceptions().length > 0) {
           var exceptions = this.getExceptions();
           var message = "";
-          for (var i=0, l=exceptions.length; i<l; i++) {
+          for (var i = 0, l = exceptions.length; i < l; i++) {
             var msg = exceptions[i].exception.message + "";
             if (msg.indexOf("Backtrace:") < 0) {
               message += exceptions[i].exception.toString();
@@ -178,11 +167,10 @@ qx.Class.define("qxl.testrunner.runner.TestItem", {
           }
           return message;
         }
-        
-          return "";
-      }
-    }),
 
+        return "";
+      },
+    }),
 
     /**
      * Returns stack trace information for a given exception.
@@ -190,10 +178,10 @@ qx.Class.define("qxl.testrunner.runner.TestItem", {
      * @param ex {Error} Exception
      * @return {String} Stack trace information
      */
-    getStackTrace : function(ex) {
+    getStackTrace(ex) {
       var trace = [];
 
-      if (typeof (ex.getStackTrace) == "function") {
+      if (typeof ex.getStackTrace == "function") {
         trace = ex.getStackTrace();
       } else {
         trace = qx.dev.StackTrace.getStackTraceFromError(ex);
@@ -203,7 +191,12 @@ qx.Class.define("qxl.testrunner.runner.TestItem", {
       while (trace.length > 0) {
         var first = trace[0];
 
-        if (first.indexOf("qx.dev.unit.AssertionError") == 0 || first.indexOf("qx.Class") == 0 || first.indexOf("qx.dev.unit.MAssert") == 0 || first.indexOf("script") == 0) {
+        if (
+          first.indexOf("qx.dev.unit.AssertionError") == 0 ||
+          first.indexOf("qx.Class") == 0 ||
+          first.indexOf("qx.dev.unit.MAssert") == 0 ||
+          first.indexOf("script") == 0
+        ) {
           trace.shift();
         } else {
           break;
@@ -213,24 +206,23 @@ qx.Class.define("qxl.testrunner.runner.TestItem", {
       return trace.join("<br>");
     },
 
-
     /**
      * Save the previous value when the state changes
      *
      * @param newState {String} New state value
      * @param oldState {String} Previous state value
      */
-    _applyState : function(newState, oldState) {
+    _applyState(newState, oldState) {
       if (oldState) {
         this.setPreviousState(oldState);
       }
-    }
+    },
   },
 
-  destruct : function() {
+  destruct() {
     this.$$test = null;
     if (this.parent) {
       this.parent = null;
     }
-  }
+  },
 });

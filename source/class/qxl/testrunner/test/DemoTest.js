@@ -28,15 +28,12 @@
  * i.e. using deeper namespaces and a corresponding file structure within the
  * <tt>test</tt> folder.
  */
-qx.Class.define("qxl.testrunner.test.DemoTest",
-{
-  extend : qx.dev.unit.TestCase,
+qx.Class.define("qxl.testrunner.test.DemoTest", {
+  extend: qx.dev.unit.TestCase,
 
-  include : [qx.dev.unit.MRequirements],
+  include: [qx.dev.unit.MRequirements],
 
-
-  members :
-  {
+  members: {
     /*
     ---------------------------------------------------------------------------
       TESTS
@@ -46,38 +43,38 @@ qx.Class.define("qxl.testrunner.test.DemoTest",
     /*
     setUp : function()
     {
-
-    },
-
-
-    tearDown : function() {
+     },
+      tearDown : function() {
       this.info("common tearDown");
     },
     */
 
-
-    testSuccess : function() {
-      this.assertEquals(4, 3+1, "This should never fail!");
+    testSuccess() {
+      this.assertEquals(4, 3 + 1, "This should never fail!");
       this.assertFalse(false, "Can false be true?!");
     },
 
-    testException : function() {
-      this.assertException(function() {
-        throw new Error("Ya darn varmint!");
-      }, Error, "varmint");
+    testException() {
+      this.assertException(
+        function () {
+          throw new Error("Ya darn varmint!");
+        },
+        Error,
+        "varmint"
+      );
     },
 
-    testFail: function () {
+    testFail() {
       this.assertTrue(false, "Well, what did you expect?");
       this.assertEquals(0, 1, "Nope");
       this.debug("Executed code after failed assertion!");
     },
 
-    testAsyncSimple : function() {
+    testAsyncSimple() {
       var self = this;
       this.info("Setting timeout");
-      window.setTimeout(function() {
-        self.resume(function() {
+      window.setTimeout(function () {
+        self.resume(function () {
           this.info("Async test OK");
         }, self);
       }, 1000);
@@ -85,22 +82,24 @@ qx.Class.define("qxl.testrunner.test.DemoTest",
       this.wait();
     },
 
-    testSsl : function() {
+    testSsl() {
       this.require(["io.ssl"]);
-      this.assert(qx.core.Environment.get("io.ssl"), "This test should have been skipped!");
+      this.assert(
+        qx.core.Environment.get("io.ssl"),
+        "This test should have been skipped!"
+      );
     },
 
-    testAsyncFail : function() {
+    testAsyncFail() {
       var self = this;
       this.info("Setting timeout");
-      window.setTimeout(function() {
-        self.resume(function() {
+      window.setTimeout(function () {
+        self.resume(function () {
           throw new Error("YARR");
         }, self);
       }, 1000);
 
       this.wait();
-    }
-
-  }
+    },
+  },
 });

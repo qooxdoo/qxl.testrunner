@@ -18,12 +18,9 @@
  */
 
 qx.Class.define("qxl.testrunner.runner.ModelUtil", {
+  type: "static",
 
-  type : "static",
-
-  statics :
-  {
-
+  statics: {
     /**
      * Creates a nested map for the test namespace from the flat list of tests
      *
@@ -31,19 +28,21 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
      * returned by {@link qx.dev.unit.TestLoader:getTestDescriptions}
      * @return {Object} Test suite object
      */
-    createModelData : function(testRep) {
+    createModelData(testRep) {
       var data = {};
-      for (var i=0, l=testRep.length; i<l; i++) {
+      for (var i = 0, l = testRep.length; i < l; i++) {
         var nameSpace = testRep[i].classname.split(".");
         var testList = testRep[i].tests;
         testList.sort();
-        for (var x=0, y=testList.length; x<y; x++) {
-          qxl.testrunner.runner.ModelUtil.addChainToMap(nameSpace.concat(testList[x]), data);
+        for (var x = 0, y = testList.length; x < y; x++) {
+          qxl.testrunner.runner.ModelUtil.addChainToMap(
+            nameSpace.concat(testList[x]),
+            data
+          );
         }
       }
       return data;
     },
-
 
     /**
      * Recursively searches a model for all items with a given property/value
@@ -54,10 +53,13 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
      * @param value {var} Property value
      * @return {Object[]} Array of matching model items
      */
-    getItemsByProperty : function(model, property, value) {
+    getItemsByProperty(model, property, value) {
       var propertyName = qx.lang.String.firstUp(property);
       var testList = [];
-      if (model["get" + propertyName] && model["get" + propertyName]() === value) {
+      if (
+        model["get" + propertyName] &&
+        model["get" + propertyName]() === value
+      ) {
         testList.push(model);
       }
 
@@ -66,13 +68,12 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
       }
 
       var kids = model.getChildren();
-      for (var i=0, l=kids.length; i<l; i++) {
+      for (var i = 0, l = kids.length; i < l; i++) {
         var child = kids.getItem(i);
         testList = testList.concat(arguments.callee(child, property, value));
       }
       return testList;
     },
-
 
     /**
      * Finds a model item by its full path name
@@ -81,13 +82,13 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
      * @param fullName {String} The item's name
      * @return {Object|null} The matching item or null if there is no match
      */
-    getItemByFullName : function(model, fullName) {
+    getItemByFullName(model, fullName) {
       if (model.fullName == fullName) {
         return model;
       }
       if (model.getChildren) {
         var kids = model.getChildren();
-        for (var i=0, l=kids.length; i<l; i++) {
+        for (var i = 0, l = kids.length; i < l; i++) {
           var child = kids.getItem(i);
           var found = arguments.callee(child, fullName);
           if (found) {
@@ -98,14 +99,13 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
       return null;
     },
 
-
     /**
      * Adds additional data fields to the model items:
      * parent : reference to the parent item
      *
      * @param model {Object} The model to process
      */
-    addDataFields : function(model) {
+    addDataFields(model) {
       if (!model.parent) {
         model.fullName = model.getName();
       }
@@ -116,7 +116,7 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
           model.sortChildren();
         }
         var kids = model.getChildren();
-        for (var i=0, l=kids.length; i<l; i++) {
+        for (var i = 0, l = kids.length; i < l; i++) {
           var child = kids.getItem(i);
           child.parent = model;
 
@@ -130,22 +130,29 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
 
           // skip binding the children's state to the parent in old IEs to
           // accelerate application startup
-          if (!(qx.core.Environment.get("browser.name") === "ie" &&
-              qx.core.Environment.get("browser.version") < 9)) {
+          if (
+            !(
+              qx.core.Environment.get("browser.name") === "ie" &&
+              qx.core.Environment.get("browser.version") < 9
+            )
+          ) {
             child.bind("state", model, "state", {
-              converter : function(data, model) {
-                if (model.getState() == "failure" || model.getState() == "error" ||
-                  data == "start" || data == "wait") {
+              converter(data, model) {
+                if (
+                  model.getState() == "failure" ||
+                  model.getState() == "error" ||
+                  data == "start" ||
+                  data == "wait"
+                ) {
                   return model.getState();
                 }
                 return data;
-              }
+              },
             });
           }
         }
       }
     },
-
 
     /**
      * Adds nested keys to a map, e.g.: addChainToMap(["foo", "bar", "baz"], {})
@@ -163,7 +170,7 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
      * @param nsArr {String[]} Array of key names
      * @param obj {Map} The initial map
      */
-    addChainToMap : function(nsArr, obj) {
+    addChainToMap(nsArr, obj) {
       if (nsArr.length == 0) {
         return;
       }
@@ -176,7 +183,7 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
       }
 
       var found = false;
-      for (var i=0, l=obj.children.length; i<l; i++) {
+      for (var i = 0, l = obj.children.length; i < l; i++) {
         if (obj.children[i].name === next) {
           found = obj.children[i];
           break;
@@ -185,14 +192,14 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
 
       if (!found) {
         found = {
-          name : next
+          name: next,
         };
+
         obj.children.push(found);
       }
 
       arguments.callee(list, found);
     },
-
 
     /**
      * Returns the following sibling of a given model item or null if there isn't
@@ -201,7 +208,7 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
      * @param node {Object} Model node
      * @return {Object|null} Following sibling
      */
-    getNextSiblingOf : function(node) {
+    getNextSiblingOf(node) {
       if (!node.parent) {
         return null;
       }
@@ -216,7 +223,6 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
       return null;
     },
 
-
     /**
      * Recursively traverses a model tree and checks if one of
      * the test classes includes the given mixin.
@@ -227,10 +233,10 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
      * @return {Boolean} <code>true</code> if at least one test class
      * in the model includes the mixin
      */
-    hasTestClassWithMixin : function(node, mixin, win) {
+    hasTestClassWithMixin(node, mixin, win) {
       var autWindow = win || window;
       var children = node.getChildren ? node.getChildren() : [];
-      for (var i=0, l=children.length; i<l; i++) {
+      for (var i = 0, l = children.length; i < l; i++) {
         var child = children.getItem(i);
         if (child.getType() == "class") {
           var clazz = autWindow.qx.Class.getByName(child.getFullName());
@@ -238,11 +244,11 @@ qx.Class.define("qxl.testrunner.runner.ModelUtil", {
             return true;
           }
         } else if (arguments.callee(child, mixin, win)) {
-            return true;
-          }
+          return true;
+        }
       }
 
       return false;
-    }
-  }
+    },
+  },
 });

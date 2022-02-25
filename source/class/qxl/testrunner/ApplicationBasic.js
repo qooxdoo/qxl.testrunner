@@ -20,13 +20,10 @@
  * Basic TestRunner main application class.
  */
 qx.Class.define("qxl.testrunner.ApplicationBasic", {
+  extend: qx.application.Basic,
 
-  extend : qx.application.Basic,
-
-  members :
-  {
-
-    main : function() {
+  members: {
+    main() {
       if (qx.core.Environment.get("runtime.name") == "rhino") {
         qx.log.Logger.register(qx.log.appender.RhinoConsole);
       } else if (qx.core.Environment.get("runtime.name") == "node.js") {
@@ -44,16 +41,20 @@ qx.Class.define("qxl.testrunner.ApplicationBasic", {
 
       this.runner = new qxl.testrunner.runner.TestRunnerBasic();
 
-      this.runner.addListener("changeTestSuiteState", function(ev) {
-        var state = ev.getData();
+      this.runner.addListener(
+        "changeTestSuiteState",
+        function (ev) {
+          var state = ev.getData();
 
-        switch (state) {
-          // async test suite loading
-          case "ready":
-            this.runner.view.run();
-            break;
-        }
-      }, this);
+          switch (state) {
+            // async test suite loading
+            case "ready":
+              this.runner.view.run();
+              break;
+          }
+        },
+        this
+      );
 
       // sync test suite loading
       if (this.runner.getTestSuiteState() === "ready") {
@@ -66,9 +67,9 @@ qx.Class.define("qxl.testrunner.ApplicationBasic", {
      *
      * @param args {String[]} Rhino arguments object
      */
-    _argumentsToSettings : function(args) {
+    _argumentsToSettings(args) {
       var opts;
-      for (var i=0, l=args.length; i<l; i++) {
+      for (var i = 0, l = args.length; i < l; i++) {
         if (args[i].indexOf("settings=") == 0) {
           opts = args[i].substr(9);
           break;
@@ -82,8 +83,10 @@ qx.Class.define("qxl.testrunner.ApplicationBasic", {
         try {
           opts = qx.lang.Json.parse(opts);
         } catch (ex) {
-          var msg = ex.toString() + "\nMake sure none of the command line" +
-          " settings contain paths with spaces!";
+          var msg =
+            ex.toString() +
+            "\nMake sure none of the command line" +
+            " settings contain paths with spaces!";
           throw new Error(msg);
         }
         for (var prop in opts) {
@@ -94,13 +97,14 @@ qx.Class.define("qxl.testrunner.ApplicationBasic", {
           try {
             qx.core.Environment.add(prop, value);
           } catch (ex) {
-            this.error("Unable to define command-line setting " + prop + ": " + ex);
+            this.error(
+              "Unable to define command-line setting " + prop + ": " + ex
+            );
           }
         }
       }
-    }
+    },
   },
-
 
   /*
   *****************************************************************************
@@ -108,7 +112,7 @@ qx.Class.define("qxl.testrunner.ApplicationBasic", {
   *****************************************************************************
   */
 
-  destruct : function() {
+  destruct() {
     this._disposeObjects("runner");
-  }
+  },
 });

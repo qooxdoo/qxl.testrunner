@@ -16,9 +16,8 @@
 
 ************************************************************************ */
 
-qx.Class.define("qxl.testrunner.TestLoader",
-{
-  extend : qx.dev.unit.TestLoader,
+qx.Class.define("qxl.testrunner.TestLoader", {
+  extend: qx.dev.unit.TestLoader,
 
   /*
   *****************************************************************************
@@ -26,16 +25,15 @@ qx.Class.define("qxl.testrunner.TestLoader",
   *****************************************************************************
   */
 
-  statics :
-  {
+  statics: {
     /**
      * Returns the TestLoader instance
      *
      * @return {qxl.testrunner.TestLoader} TestLoader instance
      */
-    getInstance : function() {
+    getInstance() {
       return this.instance;
-    }
+    },
   },
 
   /*
@@ -44,11 +42,10 @@ qx.Class.define("qxl.testrunner.TestLoader",
   *****************************************************************************
   */
 
-  members :
-  {
-    main : function() {
+  members: {
+    main() {
       qxl.testrunner.TestLoader.instance = this;
-      this.base(arguments);
-    }
-  }
+      super.main();
+    },
+  },
 });

@@ -19,10 +19,8 @@
 /**
  * TestRunner main application class.
  */
-qx.Class.define("qxl.testrunner.Application",
-{
-  extend : qx.application.Native,
-
+qx.Class.define("qxl.testrunner.Application", {
+  extend: qx.application.Native,
 
   /*
   *****************************************************************************
@@ -30,12 +28,10 @@ qx.Class.define("qxl.testrunner.Application",
   *****************************************************************************
   */
 
-  members :
-  {
-
-    main : function() {
+  members: {
+    main() {
       // Call super class
-      this.base(arguments);
+      super.main();
 
       // Enable logging in debug variant
       if (qx.core.Environment.get("qx.debug")) {
@@ -46,9 +42,8 @@ qx.Class.define("qxl.testrunner.Application",
       }
 
       this.runner = new qxl.testrunner.runner.TestRunner();
-    }
+    },
   },
-
 
   /*
   *****************************************************************************
@@ -56,7 +51,7 @@ qx.Class.define("qxl.testrunner.Application",
   *****************************************************************************
   */
 
-  destruct : function() {
+  destruct() {
     this._disposeObjects("runner");
-  }
+  },
 });

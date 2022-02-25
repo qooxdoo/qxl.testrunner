@@ -16,9 +16,8 @@
 
 ************************************************************************ */
 
-qx.Class.define("qxl.testrunner.TestLoaderInline",
-{
-  extend : qx.dev.unit.TestLoaderInline,
+qx.Class.define("qxl.testrunner.TestLoaderInline", {
+  extend: qx.dev.unit.TestLoaderInline,
 
   /*
   *****************************************************************************
@@ -26,16 +25,15 @@ qx.Class.define("qxl.testrunner.TestLoaderInline",
   *****************************************************************************
   */
 
-  statics :
-  {
+  statics: {
     /**
      * TODOC
      *
      * @return {var} TODOC
      */
-    getInstance : function() {
+    getInstance() {
       return this.instance;
-    }
+    },
   },
 
   /*
@@ -44,16 +42,15 @@ qx.Class.define("qxl.testrunner.TestLoaderInline",
   *****************************************************************************
   */
 
-  members :
-  {
+  members: {
     /**
      * TODOC
      *
      * @return {void}
      */
-    main : function() {
+    main() {
       qxl.testrunner.TestLoader.instance = this;
-      this.base(arguments);
-    }
-  }
+      super.main();
+    },
+  },
 });

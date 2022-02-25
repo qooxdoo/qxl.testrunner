@@ -20,11 +20,9 @@
  * Common base class for TestRunner views.
  */
 qx.Class.define("qxl.testrunner.view.Abstract", {
+  type: "abstract",
 
-  type : "abstract",
-
-  extend : qx.core.Object,
-
+  extend: qx.core.Object,
 
   /*
   *****************************************************************************
@@ -32,104 +30,95 @@ qx.Class.define("qxl.testrunner.view.Abstract", {
   *****************************************************************************
   */
 
-  events :
-  {
+  events: {
     /** Event fired to instruct the TestRunner to start running the test suite */
-    runTests : "qx.event.type.Event",
+    runTests: "qx.event.type.Event",
 
     /** Event fired to instruct the TestRunner to stop running the test suite */
-    stopTests : "qx.event.type.Event"
+    stopTests: "qx.event.type.Event",
   },
-
 
   /*
   *****************************************************************************
      PROPERTIES
   *****************************************************************************
   */
-  properties :
-  {
+  properties: {
     /** Status message to be displayed in the view */
-    status :
-    {
-      init : "",
-      check : "String",
-      apply : "_applyStatus"
+    status: {
+      init: "",
+      check: "String",
+      apply: "_applyStatus",
     },
 
     /** The test suite's current state, synchronized with
       {@link qxl.testrunner.runner.TestRunner#testSuiteState} */
-    testSuiteState :
-    {
-      init : "init",
-      apply : "_applyTestSuiteState",
-      event : "changeTestSuiteState"
+    testSuiteState: {
+      init: "init",
+      apply: "_applyTestSuiteState",
+      event: "changeTestSuiteState",
     },
 
     /** Number of configured tests that haven't run yet. */
-    testCount :
-    {
-      init : null,
-      nullable : true,
-      apply : "_applyTestCount",
-      event : "changeTestCount"
+    testCount: {
+      init: null,
+      nullable: true,
+      apply: "_applyTestCount",
+      event: "changeTestCount",
     },
 
     /** Model object representing the test namespace. */
-    testModel :
-    {
-      init : null,
-      nullable : true,
-      apply : "_applyTestModel"
+    testModel: {
+      init: null,
+      nullable: true,
+      apply: "_applyTestModel",
     },
 
     /** List of tests selected by the user */
-    selectedTests :
-    {
-      init : null,
-      nullable : true,
-      event : "changeSelectedTests"
+    selectedTests: {
+      init: null,
+      nullable: true,
+      event: "changeSelectedTests",
     },
 
     /** URI of the application containing the test classes */
-    autUri :
-    {
-      check : "String",
-      nullable : true,
-      event : "changeAutUri",
-      apply : "_applyAutUri"
-    }
+    autUri: {
+      check: "String",
+      nullable: true,
+      event: "changeAutUri",
+      apply: "_applyAutUri",
+    },
   },
-
 
   /*
   *****************************************************************************
      MEMBERS
   *****************************************************************************
   */
-  members :
-  {
+  members: {
     /**
      * Add a listener to a TestResultData object to be informed of state changes.
      * @param testResultData {qxl.testrunner.unit.TestResultData}
      * Test result data object
      */
-    addTestResult : function(testResultData) {
-      testResultData.addListener("changeState", function(ev) {
-        this._onTestChangeState(testResultData);
-      }, this);
+    addTestResult(testResultData) {
+      testResultData.addListener(
+        "changeState",
+        function (ev) {
+          this._onTestChangeState(testResultData);
+        },
+        this
+      );
     },
-
 
     /**
      * Visualize TestResultData state changes.
      * @param testResultData {qxl.testrunner.unit.TestResultData}
      * Test result data object
      */
-    _onTestChangeState : function(testResultData) {
+    _onTestChangeState(testResultData) {
       this.error("Missing implementation of _onTestChangeState!");
     },
-
 
     /**
      * Displays a status message.
@@ -137,10 +126,9 @@ qx.Class.define("qxl.testrunner.view.Abstract", {
      * @param value {String} The message to be displayed
      * @param old {String} Previous value
      */
-    _applyStatus : function(value, old) {
+    _applyStatus(value, old) {
       this.info(value);
     },
-
 
     /**
      * Visualizes the current state of the test suite.
@@ -149,10 +137,9 @@ qx.Class.define("qxl.testrunner.view.Abstract", {
      * "ready", "running", "finished", "aborted", "error"
      * @param old {String} Previous value
      */
-    _applyTestSuiteState : function(value, old) {
+    _applyTestSuiteState(value, old) {
       this.info("Test suite state: " + value);
     },
-
 
     /**
      * Visualizes the amount of tests remaining.
@@ -160,10 +147,9 @@ qx.Class.define("qxl.testrunner.view.Abstract", {
      * @param value {Integer} Number of pending tests
      * @param old {Integer} Previous value
      */
-    _applyTestCount : function(value, old) {
+    _applyTestCount(value, old) {
       this.info(value + " tests pending.");
     },
-
 
     /**
      * Apply the test model: Build a list of tests in the GUI etc.
@@ -171,10 +157,9 @@ qx.Class.define("qxl.testrunner.view.Abstract", {
      * @param value {Object} Test model object
      * @param old {Object} Previous value
      */
-    _applyTestModel : function(value, old) {
+    _applyTestModel(value, old) {
       this.error("Missing implementation of _applyTestModel!");
     },
-
 
     /**
      * Applies the AUT's URI, e.g. by setting an Iframe's source
@@ -182,11 +167,10 @@ qx.Class.define("qxl.testrunner.view.Abstract", {
      * @param value {String} AUT URI
      * @param old {String} Previous value
      */
-    _applyAutUri : function(value, old) {}
+    _applyAutUri(value, old) {},
   },
 
-  destruct : function() {
+  destruct() {
     this.removeAllBindings();
-  }
-
+  },
 });

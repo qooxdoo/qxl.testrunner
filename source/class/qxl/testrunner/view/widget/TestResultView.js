@@ -17,7 +17,7 @@
 ************************************************************************ */
 
 /* ************************************************************************
-************************************************************************ */
+ ************************************************************************ */
 
 /**
  * Widget which displays the test results as a formatted list.
@@ -27,17 +27,16 @@
  * @require(qx.module.Attribute)
  * @require(qx.module.Traversing)
  */
-qx.Class.define("qxl.testrunner.view.widget.TestResultView",
-{
-  extend : qx.ui.core.Widget,
-  include : [qx.ui.core.MNativeOverflow],
+qx.Class.define("qxl.testrunner.view.widget.TestResultView", {
+  extend: qx.ui.core.Widget,
+  include: [qx.ui.core.MNativeOverflow],
 
-  construct : function() {
-    this.base(arguments);
+  construct() {
+    super();
     this.set({
-      overflowX : "auto",
-      overflowY : "auto",
-      selectable: true
+      overflowX: "auto",
+      overflowY: "auto",
+      selectable: true,
     });
 
     if (qx.core.Environment.get("device.type") !== "desktop") {
@@ -45,8 +44,10 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView",
       this.getContentElement().setStyle("touchAction", "auto");
     }
     // Workaround for http://bugzilla.qooxdoo.org/show_bug.cgi?id=7679
-    if (qx.core.Environment.get("engine.name") == "mshtml" &&
-      qx.core.Environment.get("browser.documentmode") == 9) {
+    if (
+      qx.core.Environment.get("engine.name") == "mshtml" &&
+      qx.core.Environment.get("browser.documentmode") == 9
+    ) {
       this.getContentElement().setStyle("position", "relative");
     }
   },
@@ -57,16 +58,14 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView",
   *****************************************************************************
   */
 
-  properties :
-  {
+  properties: {
     /** Controls the display of stack trace information for exceptions */
-    showStackTrace : {
-      check : "Boolean",
-      init : true,
-      apply : "__applyShowStackTrace"
-    }
+    showStackTrace: {
+      check: "Boolean",
+      init: true,
+      apply: "__applyShowStackTrace",
+    },
   },
-
 
   /*
   *****************************************************************************
@@ -74,34 +73,34 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView",
   *****************************************************************************
   */
 
-  members :
-  {
-    __results : null,
-
+  members: {
+    __results: null,
 
     /**
      * Adds a new entry to the test results HTML
      *
      * @param testResult {Object} A test model object
      */
-    addTestResult : function(testResult) {
+    addTestResult(testResult) {
       //this.__results.push(testResult);
-      testResult.addListener("changeState", function() {
-        this.__onStateChange(testResult);
-      }, this);
+      testResult.addListener(
+        "changeState",
+        function () {
+          this.__onStateChange(testResult);
+        },
+        this
+      );
     },
-
 
     /**
      * Removes all entries from the list.
      *
      * @return {void}
      */
-    clear : function() {
+    clear() {
       this.getContentElement().getDomElement().innerHTML = "";
       this.__results = {};
     },
-
 
     /**
      * Reacts to test state changes by creating a new list entry and/or
@@ -109,7 +108,7 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView",
      *
      * @param testResult {qxl.testrunner.runner.TestItem} Test data object
      */
-    __onStateChange : function(testResult) {
+    __onStateChange(testResult) {
       if (testResult.getState() === testResult.getPreviousState()) {
         return;
       }
@@ -130,24 +129,24 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView",
       this._updateResultElement(testResult);
     },
 
-
     /**
      * Creates a list item element for a single test result
      * @param fullName {String} The test's fully qualified name
      * @return {q} Collection containing the list item
      */
-    _getResultElement : function(fullName) {
-      var coll = q.create("<li></li>").addClass("testResult")
-      .append(q.create("<h3>" + fullName + "</h3>"));
+    _getResultElement(fullName) {
+      var coll = q
+        .create("<li></li>")
+        .addClass("testResult")
+        .append(q.create("<h3>" + fullName + "</h3>"));
       return coll;
     },
-
 
     /**
      * Updates an existing list entry corresponding to a given test result
      * @param testResult {qxl.testrunner.runner.TestItem} Test data object
      */
-    _updateResultElement : function(testResult) {
+    _updateResultElement(testResult) {
       var fullName = testResult.getFullName();
       var state = testResult.getState();
       var coll = this.__results[fullName];
@@ -161,14 +160,16 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView",
       }
     },
 
-
     // overridden
-    _createContentElement : function() {
-      return new qx.html.Element("ul", {}, {
-        "class": "resultPane"
-      });
+    _createContentElement() {
+      return new qx.html.Element(
+        "ul",
+        {},
+        {
+          class: "resultPane",
+        }
+      );
     },
-
 
     /**
      * Returns a DOM tree containing details about the exception(s) that
@@ -176,26 +177,40 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView",
      * @param testResult {qxl.testrunner.runner.TestItem} Test data object
      * @return {q} Collection containing the error detail element
      */
-    _getErrorDetailElement : function(testResult) {
+    _getErrorDetailElement(testResult) {
       var exceptArr = testResult.getExceptions();
       if (exceptArr.length == 0) {
         return null;
       }
 
       var coll = q.create("<div class='errorDetail'></div>");
-      for (var i=0, l=exceptArr.length; i<l; i++) {
+      for (var i = 0, l = exceptArr.length; i < l; i++) {
         var error = exceptArr[i].exception;
-        var errorStr = error.toString ? error.toString() :
-          error.message ? error.message : "Unknown Error";
+        var errorStr = error.toString
+          ? error.toString()
+          : error.message
+          ? error.message
+          : "Unknown Error";
 
-        var prefix = error.classname && error.classname == "qx.dev.unit.MeasurementResult" ? "" :
-          "Error message is: <br />";
+        var prefix =
+          error.classname && error.classname == "qx.dev.unit.MeasurementResult"
+            ? ""
+            : "Error message is: <br />";
 
-        coll.append(q.create("<strong>" + prefix + qx.bom.String.escape(errorStr).replace(/\n/g, "<br/>") + "</strong>"));
+        coll.append(
+          q.create(
+            "<strong>" +
+              prefix +
+              qx.bom.String.escape(errorStr).replace(/\n/g, "<br/>") +
+              "</strong>"
+          )
+        );
 
         var trace = testResult.getStackTrace(exceptArr[i].exception);
         if (trace && trace.length > 0) {
-          var traceEl = q.create("<div class=\"trace\">Stack trace: <br/>" + trace + "</div>");
+          var traceEl = q.create(
+            '<div class="trace">Stack trace: <br/>' + trace + "</div>"
+          );
           if (!this.getShowStackTrace()) {
             traceEl.hide();
           }
@@ -205,20 +220,19 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView",
       return coll;
     },
 
-
     /**
      * Display or hide stack trace info for all test results.
      *
      * @param value {Boolean} Display (true) or hide (false) stack trace info.
      * @return {void}
      */
-    __applyShowStackTrace : function(value) {
+    __applyShowStackTrace(value) {
       var coll = q(".resultPane .trace");
       value ? coll.show() : coll.hide();
-    }
+    },
   },
 
-  destruct : function() {
+  destruct() {
     this.__results = null;
-  }
+  },
 });

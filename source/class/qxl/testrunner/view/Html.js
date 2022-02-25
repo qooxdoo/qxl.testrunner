@@ -36,11 +36,9 @@
  *
  */
 qx.Class.define("qxl.testrunner.view.Html", {
+  extend: qxl.testrunner.view.Abstract,
 
-  extend : qxl.testrunner.view.Abstract,
-
-  include : [qxl.testrunner.view.MAutoRun],
-
+  include: [qxl.testrunner.view.MAutoRun],
 
   /*
   *****************************************************************************
@@ -52,37 +50,47 @@ qx.Class.define("qxl.testrunner.view.Html", {
    * @param rootElement {DOMElement?} DOM Element in which the result view
    * should be created. Default: document.body
    */
-  construct : function(rootElement) {
+  construct(rootElement) {
     // "portable" TR: Run the Grunt task "replace:templVarWithMinifiedCss" to replace %{Styles_}
     // (without '_' => this is just to avoid replacing within the comment) with the (minified)
     // contents of qxl.testrunner.css in the generated script file (build version)
-    if (!qx.core.Environment.get("qx.debug") &&
-      qx.core.Environment.get("qxl.testrunner.testOrigin") == "external") {
+    if (
+      !qx.core.Environment.get("qx.debug") &&
+      qx.core.Environment.get("qxl.testrunner.testOrigin") == "external"
+    ) {
       qx.bom.Stylesheet.createElement("%{Styles}");
     } else {
-      var s1 = qx.util.ResourceManager.getInstance().toUri("indigo/css/reset.css");
-      var s2 = qx.util.ResourceManager.getInstance().toUri("indigo/css/base.css");
-      var s3 = qx.util.ResourceManager.getInstance().toUri("qxl/testrunner/view/html/css/qxl.testrunner.css");
+      var s1 = qx.util.ResourceManager.getInstance().toUri(
+        "indigo/css/reset.css"
+      );
+      var s2 = qx.util.ResourceManager.getInstance().toUri(
+        "indigo/css/base.css"
+      );
+      var s3 = qx.util.ResourceManager.getInstance().toUri(
+        "qxl/testrunner/view/html/css/qxl.testrunner.css"
+      );
       qx.bom.Stylesheet.includeFile(s1);
       qx.bom.Stylesheet.includeFile(s2);
       qx.bom.Stylesheet.includeFile(s3);
     }
 
-    this.__nativeProfiling = (qx.core.Environment.get("qxl.testrunner.performance") &&
+    this.__nativeProfiling =
+      qx.core.Environment.get("qxl.testrunner.performance") &&
       qx.Class.hasMixin(this.constructor, qxl.testrunner.view.MPerformance) &&
-      typeof console != "undefined" && console.profile);
+      typeof console != "undefined" &&
+      console.profile;
 
     this._getHeader().appendTo("body");
-    q.create("<div id=\"main\"></div>").appendTo("body");
+    q.create('<div id="main"></div>').appendTo("body");
     this._getMainControls().appendTo("#header-wrapper");
     this._bindMainControls();
 
-    q.create("<div id=\"tests\"></div>").appendTo("#main");
+    q.create('<div id="tests"></div>').appendTo("#main");
     this._getTestControls().appendTo("#tests");
     this._bindTestControls();
     this._getTestList().appendTo("#tests");
 
-    q.create("<div id=\"frame_log\"></div>").appendTo("#main");
+    q.create('<div id="frame_log"></div>').appendTo("#main");
 
     this._getFooter().appendTo("body");
 
@@ -91,189 +99,236 @@ qx.Class.define("qxl.testrunner.view.Html", {
     this.__testResults = {};
   },
 
-
   /*
   *****************************************************************************
      PROPERTIES
   *****************************************************************************
   */
-  properties :
-  {
+  properties: {
     /** Controls the display of stack trace information for exceptions */
-    showStack :
-    {
-      check : "Boolean",
-      init : true,
-      apply : "_applyShowStack"
+    showStack: {
+      check: "Boolean",
+      init: true,
+      apply: "_applyShowStack",
     },
 
     /** Controls whether successfully passed tests should appear in the results
      * list */
-    showPassed :
-    {
-      check : "Boolean",
-      init : true,
-      nullable : true,
-      apply : "_applyShowPassed"
+    showPassed: {
+      check: "Boolean",
+      init: true,
+      nullable: true,
+      apply: "_applyShowPassed",
     },
 
     /** Running count of failed tests */
-    failedTestCount :
-    {
-      check : "Integer",
-      init : 0
+    failedTestCount: {
+      check: "Integer",
+      init: 0,
     },
 
     /** Running count of passed tests */
-    successfulTestCount :
-    {
-      check : "Integer",
-      init : 0
+    successfulTestCount: {
+      check: "Integer",
+      init: 0,
     },
 
     /** Running count of skipped tests */
-    skippedTestCount :
-    {
-      check : "Integer",
-      init : 0
-    }
+    skippedTestCount: {
+      check: "Integer",
+      init: 0,
+    },
   },
-
 
   /*
   *****************************************************************************
      MEMBERS
   *****************************************************************************
   */
-  members :
-  {
-    __filterTimer : null,
-    __testModel : null,
-    __testNamesList : null,
-    __testResults : null,
-    __nativeProfiling : false,
+  members: {
+    __filterTimer: null,
+    __testModel: null,
+    __testNamesList: null,
+    __testResults: null,
+    __nativeProfiling: false,
 
     /**
      * Creates the header.
      */
-    _getHeader : function() {
-      var header = q.create("<div id=\"header-wrapper\"></div>")
-      .append("<div id=\"header\"><h1>qooxdoo Test Runner</h1>" +
-        "<div id=\"search\"><input type=\"search\" placeholder=\"Filter Tests\" id=\"testfilter\"/></div>" +
-        "</div>")
-      .append("<div class=\"decoration\" />");
+    _getHeader() {
+      var header = q
+        .create('<div id="header-wrapper"></div>')
+        .append(
+          '<div id="header"><h1>qooxdoo Test Runner</h1>' +
+            '<div id="search"><input type="search" placeholder="Filter Tests" id="testfilter"/></div>' +
+            "</div>"
+        )
+        .append('<div class="decoration" />');
 
       return header;
     },
 
-
     /**
      * Creates the main controls.
      */
-    _getMainControls : function() {
-      var controls = q.create("<div id=\"controls\"></div>")
-      .append("<input type=\"submit\" title=\"Run selected tests (Ctrl+R)\" id=\"run\" value=\"Run Tests\"></input>" +
-      "<input type=\"submit\" title=\"Stop the test suite (Ctrl+S)\" id=\"stop\" value=\"Stop Tests\"></input>")
-      .append(q.create("<input type=\"checkbox\">").setAttributes({id: "togglestack", checked : "checked"}))
-      .append("<label for=\"togglestack\">Show stack traces</label>")
-      .append(q.create("<input type=\"checkbox\">").setAttributes({id: "togglepassed", checked: "checked"}))
-      .append("<label for=\"togglepassed\">Show successful tests</label>");
+    _getMainControls() {
+      var controls = q
+        .create('<div id="controls"></div>')
+        .append(
+          '<input type="submit" title="Run selected tests (Ctrl+R)" id="run" value="Run Tests"></input>' +
+            '<input type="submit" title="Stop the test suite (Ctrl+S)" id="stop" value="Stop Tests"></input>'
+        )
+        .append(
+          q
+            .create('<input type="checkbox">')
+            .setAttributes({ id: "togglestack", checked: "checked" })
+        )
+        .append('<label for="togglestack">Show stack traces</label>')
+        .append(
+          q
+            .create('<input type="checkbox">')
+            .setAttributes({ id: "togglepassed", checked: "checked" })
+        )
+        .append('<label for="togglepassed">Show successful tests</label>');
 
       if (this.__nativeProfiling) {
-        controls.append(q.create("<input type=\"checkbox\">").setAttributes({id: "nativeprofiling"}).hide())
-        .append(q.create("<label for=\"nativeprofiling\">Use native console profiling feature for performance tests</label>").hide());
+        controls
+          .append(
+            q
+              .create('<input type="checkbox">')
+              .setAttributes({ id: "nativeprofiling" })
+              .hide()
+          )
+          .append(
+            q
+              .create(
+                '<label for="nativeprofiling">Use native console profiling feature for performance tests</label>'
+              )
+              .hide()
+          );
       }
 
       return controls;
     },
 
-
     /**
      * Add listeners to the main Test Runner controls
      */
-    _bindMainControls : function() {
+    _bindMainControls() {
       var controls = q("#controls");
       controls.getChildren("#run").on("tap", this.__runTests, this);
       controls.getChildren("#stop").on("tap", this.__stopTests, this);
 
-      controls.getChildren("#togglestack").on("change", function(ev) {
-        this.setShowStack(ev.getTarget().checked);
-      }, this);
+      controls.getChildren("#togglestack").on(
+        "change",
+        function (ev) {
+          this.setShowStack(ev.getTarget().checked);
+        },
+        this
+      );
 
-      controls.getChildren("#togglepassed").on("change", function(ev) {
-        this.setShowPassed(ev.getTarget().checked);
-      }, this);
+      controls.getChildren("#togglepassed").on(
+        "change",
+        function (ev) {
+          this.setShowPassed(ev.getTarget().checked);
+        },
+        this
+      );
 
       if (this.__nativeProfiling) {
-        controls.getChildren("#nativeprofiling").on("change", function(ev) {
-          this.setNativeProfiling(ev.getTarget().checked);
-        }, this);
+        controls.getChildren("#nativeprofiling").on(
+          "change",
+          function (ev) {
+            this.setNativeProfiling(ev.getTarget().checked);
+          },
+          this
+        );
       }
     },
-
 
     /**
      * Creates the test selection controls.
      */
-    _getTestControls : function() {
-      var testControls = q.create("<div id=\"testcontrols\" class=\"controls\">" +
-      "  <h2>Test Suite</h2>" +
-      "  <div>" +
-      "    <label for=\"togglealltests\">Select/deselect all listed tests</label>" +
-      "  </div>" +
-      "</div>");
-      testControls.getChildren("div").getChildren("label")
-      .before(q.create("<input type=\"checkbox\">").setAttributes({id: "togglealltests", checked: "checked"}));
+    _getTestControls() {
+      var testControls = q.create(
+        '<div id="testcontrols" class="controls">' +
+          "  <h2>Test Suite</h2>" +
+          "  <div>" +
+          '    <label for="togglealltests">Select/deselect all listed tests</label>' +
+          "  </div>" +
+          "</div>"
+      );
+      testControls
+        .getChildren("div")
+        .getChildren("label")
+        .before(
+          q
+            .create('<input type="checkbox">')
+            .setAttributes({ id: "togglealltests", checked: "checked" })
+        );
 
       return testControls;
     },
 
-
     /**
      * Add listeners to the test list controls
      */
-    _bindTestControls : function() {
-      q("#togglealltests").on("change", function(ev) {
-        this.toggleAllTests(ev.getTarget().checked, true);
-      }, this);
+    _bindTestControls() {
+      q("#togglealltests").on(
+        "change",
+        function (ev) {
+          this.toggleAllTests(ev.getTarget().checked, true);
+        },
+        this
+      );
 
       this.__filterTimer = new qx.event.Timer(500);
-      this.__filterTimer.addListener("interval", function(ev) {
-        var filter = q("#testfilter").getValue();
-        this.__filterTimer.stop();
-        this.filterTests(filter);
-      }, this);
+      this.__filterTimer.addListener(
+        "interval",
+        function (ev) {
+          var filter = q("#testfilter").getValue();
+          this.__filterTimer.stop();
+          this.filterTests(filter);
+        },
+        this
+      );
 
-      q("#testfilter").on("keyup", function(ev) {
-        this.__filterTimer.restart();
-      }, this)
-      .on("search", function() {
-        var filter = q("#testfilter").getValue();
-        this.filterTests(filter);
-      }, this);
+      q("#testfilter")
+        .on(
+          "keyup",
+          function (ev) {
+            this.__filterTimer.restart();
+          },
+          this
+        )
+        .on(
+          "search",
+          function () {
+            var filter = q("#testfilter").getValue();
+            this.filterTests(filter);
+          },
+          this
+        );
     },
-
 
     /**
      * Creates the list of available tests and attaches it to the root node.
      */
-    _getTestList : function() {
-      return q.create("<ul id=\"testlist\"></ul>");
+    _getTestList() {
+      return q.create('<ul id="testlist"></ul>');
     },
-
 
     /**
      * Creates the footer/status bar.
      */
-    _getFooter : function() {
-      return q.create("<div id=\"footer\"><span id=\"status\"></span></div>");
+    _getFooter() {
+      return q.create('<div id="footer"><span id="status"></span></div>');
     },
-
 
     /**
      * Empties the results display.
      */
-    clearResults : function() {
+    clearResults() {
       q("#testlist ul").remove();
       q("#testlist li label").setAttribute("class", "");
     },
@@ -281,14 +336,14 @@ qx.Class.define("qxl.testrunner.view.Html", {
     /**
      * Empties the test list.
      */
-    clearTestList : function() {
+    clearTestList() {
       q("#testlist")[0].innerHTML = "";
     },
 
     /**
      * Run the selected tests
      */
-    __runTests : function() {
+    __runTests() {
       if (this.getTestSuiteState() == "finished") {
         this.reset();
       }
@@ -296,10 +351,16 @@ qx.Class.define("qxl.testrunner.view.Html", {
       var selection = this.getSelectedTests();
       selection.removeAll();
       var checked = [];
-      q("#testlist input:checked").forEach(function(el, index, coll) {
+      q("#testlist input:checked").forEach(function (el, index, coll) {
         var testName = q("label[for=" + el.id + "]")[0].innerHTML;
         if (q(el).getParents().getClass().indexOf("hidden") == -1) {
-          checked.push(qxl.testrunner.runner.ModelUtil.getItemsByProperty(this.__testModel, "fullName", testName)[0]);
+          checked.push(
+            qxl.testrunner.runner.ModelUtil.getItemsByProperty(
+              this.__testModel,
+              "fullName",
+              testName
+            )[0]
+          );
         }
       }, this);
       selection.append(checked);
@@ -310,39 +371,45 @@ qx.Class.define("qxl.testrunner.view.Html", {
     /**
      * Stop a running test suite
      */
-    __stopTests : function() {
+    __stopTests() {
       this.fireEvent("stopTests");
     },
 
     /**
      * Reload the test suite
      */
-    __reloadAut : function() {
+    __reloadAut() {
       var src = q("#iframesrc").getValue();
       this.resetAutUri();
       this.setAutUri(src);
     },
-
 
     /**
      * Returns the iframe element the AUT should be loaded in.
      *
      * @return {DOMElement} The iframe
      */
-    getIframe : function() {
+    getIframe() {
       var autFrame = q("#autframe");
       if (autFrame.length == 1) {
         return autFrame[0];
       }
 
-      var frameContainer = q.create("<div id=\"framecontainer\">" +
-        "<div id=\"framecontrols\" class=\"controls\">" +
-          "<h2>Application Under Test</h2>" +
-          "<input type=\"submit\" title=\"Reload the test suite (Ctrl+Shift+R)\" id=\"setiframesrc\" value=\"Reload\"></input>" +
-          "<input type=\"text\" id=\"iframesrc\"></input>" +
-        "</div>")
-      .append(q.create("<iframe onload=\"qx.event.handler.Iframe.onevent(this)\" id=\"autframe\">"))
-      .appendTo("#frame_log");
+      var frameContainer = q
+        .create(
+          '<div id="framecontainer">' +
+            '<div id="framecontrols" class="controls">' +
+            "<h2>Application Under Test</h2>" +
+            '<input type="submit" title="Reload the test suite (Ctrl+Shift+R)" id="setiframesrc" value="Reload"></input>' +
+            '<input type="text" id="iframesrc"></input>' +
+            "</div>"
+        )
+        .append(
+          q.create(
+            '<iframe onload="qx.event.handler.Iframe.onevent(this)" id="autframe">'
+          )
+        )
+        .appendTo("#frame_log");
 
       q("#setiframesrc").on("tap", this.__reloadAut, this);
 
@@ -355,28 +422,31 @@ qx.Class.define("qxl.testrunner.view.Html", {
      *
      * @return {Element} DIV element
      */
-    getLogAppenderElement : function() {
+    getLogAppenderElement() {
       var log = q("#log");
       if (log.length == 1) {
         return log[0];
       }
 
-      var logContainer = q.create("<div id=\"logcontainer\">" +
-          "<div id=\"logcontrols\" class=\"controls\">" +
+      var logContainer = q
+        .create(
+          '<div id="logcontainer">' +
+            '<div id="logcontrols" class="controls">' +
             "<h2>Log</h2>" +
-//            '<div>' +
-//              '<select id="loglevel">' +
-//                '<option>Debug</option>' +
-//              '</select>' +
-//              '<label for="loglevel">Log level</label>' +
-//            '</div>' +
-          "</div>" +
-          "<div id=\"log\" class=\"monotype\"></div>" +
-        "</div>").appendTo("#frame_log");
+            //            '<div>' +
+            //              '<select id="loglevel">' +
+            //                '<option>Debug</option>' +
+            //              '</select>' +
+            //              '<label for="loglevel">Log level</label>' +
+            //            '</div>' +
+            "</div>" +
+            '<div id="log" class="monotype"></div>' +
+            "</div>"
+        )
+        .appendTo("#frame_log");
 
       return logContainer.getChildren("#log")[0];
     },
-
 
     /**
      * Selects or deselects all tests visible in the list.
@@ -384,11 +454,12 @@ qx.Class.define("qxl.testrunner.view.Html", {
      * @param selected {Boolean} true: select all tests; false: deselect all
      * tests
      */
-    toggleAllTests : function(selected) {
-      var boxes = q("#testlist li").filter(function(item) {
-        return !q(item).hasClass("hidden");
-      })
-      .getChildren("input[type=checkbox]");
+    toggleAllTests(selected) {
+      var boxes = q("#testlist li")
+        .filter(function (item) {
+          return !q(item).hasClass("hidden");
+        })
+        .getChildren("input[type=checkbox]");
 
       if (selected) {
         boxes.setAttribute("checked", "checked");
@@ -399,17 +470,16 @@ qx.Class.define("qxl.testrunner.view.Html", {
       this.__storeSelectedTests();
     },
 
-
     /**
      * Shows and selects any tests matching the search term while hiding and
      * deselecting the rest.
      *
      * @param term {String} Search term
      */
-    filterTests : function(term) {
+    filterTests(term) {
       var searchRegExp = new RegExp("^.*" + term + ".*", "ig");
 
-      this.__testNamesList.forEach(function(item, index, list) {
+      this.__testNamesList.forEach(function (item, index, list) {
         var testIndex = list.indexOf(item);
         var id = "cb_" + testIndex;
         var listItem = q("#" + id).getParents();
@@ -424,12 +494,11 @@ qx.Class.define("qxl.testrunner.view.Html", {
       q.cookie.set("testFilter", term);
     },
 
-
     /**
      * Resets the result counters, clears the results display and reapplies the
      * test selection so that the suite can be run again.
      */
-    reset : function() {
+    reset() {
       this.resetFailedTestCount();
       this.resetSuccessfulTestCount();
       this.resetSkippedTestCount();
@@ -437,14 +506,13 @@ qx.Class.define("qxl.testrunner.view.Html", {
       this.__testResults = {};
     },
 
-
     /**
      * Visualizes the status of a single test result as it changes during test
      * execution.
      *
      * @param testResultData {Object} A test model object
      */
-    _onTestChangeState : function(testResultData) {
+    _onTestChangeState(testResultData) {
       var testName = testResultData.getFullName();
       var state = testResultData.getState();
 
@@ -479,8 +547,7 @@ qx.Class.define("qxl.testrunner.view.Html", {
       }
     },
 
-
-    __testExceptions : null,
+    __testExceptions: null,
 
     /**
      * Styles an entry in the results view according to the corresponding test's
@@ -488,7 +555,7 @@ qx.Class.define("qxl.testrunner.view.Html", {
      *
      * @param testResultData {qxl.testrunner.runner.TestItem} Test result object
      */
-    _markTestInList : function(testResultData) {
+    _markTestInList(testResultData) {
       if (!this.__testExceptions) {
         this.__testExceptions = {};
       }
@@ -498,8 +565,10 @@ qx.Class.define("qxl.testrunner.view.Html", {
 
       var testIndex = this.__testNamesList.indexOf(testName);
       var id = "cb_" + testIndex;
-      var listItem = q("#" + id).getParents()
-      .setAttribute("class", "").addClass("t_" + state);
+      var listItem = q("#" + id)
+        .getParents()
+        .setAttribute("class", "")
+        .addClass("t_" + state);
       if (state === "success" && !this.getShowPassed()) {
         listItem.addClass("hidden");
       }
@@ -512,11 +581,10 @@ qx.Class.define("qxl.testrunner.view.Html", {
 
       this.__testExceptions[testIndex] = exList;
       var that = this;
-      window.setTimeout(function() {
+      window.setTimeout(function () {
         listItem.append(that.__testExceptions[testIndex]);
       }, 150);
     },
-
 
     /**
      * Returns an ordered list element containing all exceptions from the given
@@ -525,7 +593,7 @@ qx.Class.define("qxl.testrunner.view.Html", {
      * @param testResultData {qxl.testrunner.runner.TestItem} Test data object
      * @return {Element} HTML list element
      */
-    _getExceptionsList : function(testResultData) {
+    _getExceptionsList(testResultData) {
       var exceptions = testResultData.getExceptions();
 
       if (!exceptions || exceptions.length == 0) {
@@ -534,11 +602,14 @@ qx.Class.define("qxl.testrunner.view.Html", {
 
       var list = q.create("<ol></ol>");
 
-      for (var i=0, l=exceptions.length; i<l; i++) {
+      for (var i = 0, l = exceptions.length; i < l; i++) {
         var error = exceptions[i].exception;
 
-        var errorStr = error.toString ? error.toString() :
-          error.message ? error.message : "Unknown Error";
+        var errorStr = error.toString
+          ? error.toString()
+          : error.message
+          ? error.message
+          : "Unknown Error";
         errorStr = errorStr.replace(/\n/g, "<br/>");
 
         var errorItem = q.create("<li>" + errorStr + "</li>");
@@ -546,8 +617,14 @@ qx.Class.define("qxl.testrunner.view.Html", {
         var trace = testResultData.getStackTrace(error);
         if (trace.length > 0) {
           var display = this.getShowStack() ? "block" : "none";
-          var stack = q.create("<div class=\"stacktrace monotype\">" + "Stack Trace:<br/>" + trace + "</div>")
-          .setStyle("display", display);
+          var stack = q
+            .create(
+              '<div class="stacktrace monotype">' +
+                "Stack Trace:<br/>" +
+                trace +
+                "</div>"
+            )
+            .setStyle("display", display);
           errorItem.append(stack);
         }
         list.append(errorItem);
@@ -556,29 +633,26 @@ qx.Class.define("qxl.testrunner.view.Html", {
       return list;
     },
 
-
     /**
      * Listener for the checkbox associated with each test in the suite.
      *
      * @param ev {qx.event.type.Event} change event
      */
-    __onToggleTest : function(ev) {
+    __onToggleTest(ev) {
       this.__storeSelectedTests();
     },
-
 
     /**
      * Saves the currently selected tests in a cookie
      */
-    __storeSelectedTests : function() {
+    __storeSelectedTests() {
       var selected = [];
-      q("#testlist input:checked").forEach(function(el, index, coll) {
+      q("#testlist input:checked").forEach(function (el, index, coll) {
         var testName = q("label[for=" + el.id + "]")[0].innerHTML;
         selected.push(testName);
       });
       q.cookie.set("selectedTests", selected.join("#"));
     },
-
 
     /*
     ****************************************************************************
@@ -591,14 +665,13 @@ qx.Class.define("qxl.testrunner.view.Html", {
      * @param value {String} The message to be displayed
      * @param old {String} The previous status
      */
-    _applyStatus : function(value, old) {
-      if (!value[0] || (value === old)) {
+    _applyStatus(value, old) {
+      if (!value[0] || value === old) {
         return;
       }
 
       q("#status")[0].innerHTML = value;
     },
-
 
     /**
      * Visualizes the current state of the test suite by displaying a status
@@ -607,14 +680,17 @@ qx.Class.define("qxl.testrunner.view.Html", {
      * @param value {String} The previous status
      * @param old
      */
-    _applyTestSuiteState : function(value, old) {
+    _applyTestSuiteState(value, old) {
       switch (value) {
         case "init":
           this.setStatus("Waiting for tests");
           break;
         case "loading":
           this.setStatus("Loading tests...");
-          q("#testfilter,#togglealltests,#run,#stop").setAttribute("disabled", "disabled");
+          q("#testfilter,#togglealltests,#run,#stop").setAttribute(
+            "disabled",
+            "disabled"
+          );
           break;
         case "ready":
           this.reset();
@@ -634,7 +710,10 @@ qx.Class.define("qxl.testrunner.view.Html", {
           break;
         case "running":
           this.setStatus("Running tests...");
-          q("#testfilter,#togglealltests,#run").setAttribute("disabled", "disabled");
+          q("#testfilter,#togglealltests,#run").setAttribute(
+            "disabled",
+            "disabled"
+          );
           q("#stop").setAttribute("disabled", false);
           break;
         case "finished":
@@ -659,8 +738,7 @@ qx.Class.define("qxl.testrunner.view.Html", {
       }
     },
 
-
-    _applyTestModel : function(value, old) {
+    _applyTestModel(value, old) {
       if (value == null) {
         this.clearTestList();
         this.clearResults();
@@ -669,13 +747,17 @@ qx.Class.define("qxl.testrunner.view.Html", {
 
       this.__testModel = value;
 
-      var testList = qxl.testrunner.runner.ModelUtil.getItemsByProperty(value, "type", "test");
+      var testList = qxl.testrunner.runner.ModelUtil.getItemsByProperty(
+        value,
+        "type",
+        "test"
+      );
       this.setSelectedTests(new qx.data.Array());
       this.clearTestList();
       this.clearResults();
 
       this.__testNamesList = [];
-      for (var i=0, l=testList.length; i<l; i++) {
+      for (var i = 0, l = testList.length; i < l; i++) {
         this.__testNamesList.push(testList[i].getFullName());
       }
 
@@ -683,15 +765,24 @@ qx.Class.define("qxl.testrunner.view.Html", {
 
       this._applyCookieSelection();
 
-      if (qx.Class.hasMixin(this.constructor, qxl.testrunner.view.MPerformance) &&
-        window.console && window.console.profile) {
+      if (
+        qx.Class.hasMixin(this.constructor, qxl.testrunner.view.MPerformance) &&
+        window.console &&
+        window.console.profile
+      ) {
         var autWindow = window;
         if (qx.core.Environment.get("qxl.testrunner.testOrigin") == "iframe") {
           autWindow = qx.bom.Iframe.getWindow(this.getIframe());
         }
 
         var mixin = autWindow.qx.dev.unit.MMeasure;
-        if (qxl.testrunner.runner.ModelUtil.hasTestClassWithMixin(this.__testModel, mixin, autWindow)) {
+        if (
+          qxl.testrunner.runner.ModelUtil.hasTestClassWithMixin(
+            this.__testModel,
+            mixin,
+            autWindow
+          )
+        ) {
           q("#nativeprofiling").getNext().show();
           q("#nativeprofiling").show();
         } else {
@@ -701,11 +792,10 @@ qx.Class.define("qxl.testrunner.view.Html", {
       }
     },
 
-
     /**
      * Selects the tests saved in the cookie
      */
-    _applyCookieSelection : function() {
+    _applyCookieSelection() {
       var cookieSelection = q.cookie.get("selectedTests");
       if (!cookieSelection) {
         this.toggleAllTests(true);
@@ -713,40 +803,38 @@ qx.Class.define("qxl.testrunner.view.Html", {
       }
       this.toggleAllTests(false);
       cookieSelection = cookieSelection.split("#");
-      cookieSelection.forEach(function(testName, idx, arr) {
-        var testIndex = this.__testNamesList.indexOf(testName);
-        var id = "cb_" + testIndex;
-        q("#" + id).setAttribute("checked", "checked");
-      }.bind(this));
+      cookieSelection.forEach(
+        function (testName, idx, arr) {
+          var testIndex = this.__testNamesList.indexOf(testName);
+          var id = "cb_" + testIndex;
+          q("#" + id).setAttribute("checked", "checked");
+        }.bind(this)
+      );
       this.__storeSelectedTests();
     },
-
 
     /**
      * Creates an entry in the HTML test list for each test in the given list
      * @param testList {String[]} Array of test names
      */
-    _createTestList : function(testList) {
-      var template = "<li><span class=\"result\"></span><input type=\"checkbox\" id=\"{{id}}\" checked=\"\"><label for=\"{{id}}\">{{name}}</label></li>";
-      for (var i=0, l=testList.length; i<l; i++) {
+    _createTestList(testList) {
+      var template =
+        '<li><span class="result"></span><input type="checkbox" id="{{id}}" checked=""><label for="{{id}}">{{name}}</label></li>';
+      for (var i = 0, l = testList.length; i < l; i++) {
         var testName = testList[i];
 
         var itemHtml = q.template.render(template, {
-          id : "cb_" + i,
-          name : testName
+          id: "cb_" + i,
+          name: testName,
         });
+
         q("#testlist")[0].innerHTML += itemHtml;
       }
 
-      q("#testlist input:checkbox")
-      .on("change", this.__onToggleTest, this);
+      q("#testlist input:checkbox").on("change", this.__onToggleTest, this);
     },
 
-
-    _applyTestCount : function(value, old) {
-
-    },
-
+    _applyTestCount(value, old) {},
 
     /**
      * (Re)Loads the AUT in the iframe.
@@ -754,7 +842,7 @@ qx.Class.define("qxl.testrunner.view.Html", {
      * @param value {String} AUT URI
      * @param old {String} Previous value
      */
-    _applyAutUri : function(value, old) {
+    _applyAutUri(value, old) {
       if (!value || value == old) {
         return;
       }
@@ -763,14 +851,13 @@ qx.Class.define("qxl.testrunner.view.Html", {
       q(this.getIframe()).setAttribute("src", value);
     },
 
-
     /**
      * Shows/hides all stack trace nodes in the results list.
      * @param value {Boolean} Incoming property value
      * @param value {Boolean} Previous property value
      * @param old
      */
-    _applyShowStack : function(value, old) {
+    _applyShowStack(value, old) {
       if (value == old) {
         return;
       }
@@ -778,14 +865,13 @@ qx.Class.define("qxl.testrunner.view.Html", {
       q(".stacktrace").setStyle("display", value ? "block" : "none");
     },
 
-
     /**
      * Shows/hides all successful tests in the results list.
      * @param value {Boolean} Incoming property value
      * @param value {Boolean} Previous property value
      * @param old
      */
-    _applyShowPassed : function(value, old) {
+    _applyShowPassed(value, old) {
       if (value === null || value === old) {
         return;
       }
@@ -799,7 +885,7 @@ qx.Class.define("qxl.testrunner.view.Html", {
     /**
      * Create keyboard shortcuts for the main controls.
      */
-    _makeCommands : function() {
+    _makeCommands() {
       var runTests = new qx.ui.command.Command("Ctrl+R");
       runTests.addListener("execute", this.__runTests, this);
 
@@ -808,8 +894,6 @@ qx.Class.define("qxl.testrunner.view.Html", {
 
       var reloadAut = new qx.ui.command.Command("Ctrl+Shift+R");
       reloadAut.addListener("execute", this.__reloadAut, this);
-    }
-
-  }
-
+    },
+  },
 });

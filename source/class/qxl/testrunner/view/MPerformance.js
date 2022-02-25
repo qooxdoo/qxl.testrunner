@@ -20,28 +20,24 @@
  * Provides support for performance tests
  */
 qx.Mixin.define("qxl.testrunner.view.MPerformance", {
-
-  construct : function() {
+  construct() {
     this.__measurements = [];
   },
 
-  properties :
-  {
+  properties: {
     /**
      * Whether the browser's built-in profiling capabilities
      * (<code>console.profile</code>) should additionally be used for
      * performance tests
      */
-    nativeProfiling :
-    {
-      check : "Boolean",
-      init : false
-    }
+    nativeProfiling: {
+      check: "Boolean",
+      init: false,
+    },
   },
 
-  members :
-  {
-    __measurements : null,
+  members: {
+    __measurements: null,
 
     /**
      * Adds an entry to the stored results
@@ -52,8 +48,10 @@ qx.Mixin.define("qxl.testrunner.view.MPerformance", {
      * @param ownTime {Integer} JavaScript execution time
      * @param renderTime {Integer} browser rendering time
      */
-    logMeasurement : function(clazz, msg, iterations, ownTime, renderTime) {
-      this.__measurements.push([clazz, msg, iterations, ownTime, renderTime].join("; "));
-    }
-  }
+    logMeasurement(clazz, msg, iterations, ownTime, renderTime) {
+      this.__measurements.push(
+        [clazz, msg, iterations, ownTime, renderTime].join("; ")
+      );
+    },
+  },
 });
