@@ -37,6 +37,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
   include: [qxl.testrunner.view.MAutoRun],
 
   construct() {
+    super();
     this.__menuItemStore = {};
 
     this.__app = qx.core.Init.getApplication();

@@ -29,6 +29,7 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
   *****************************************************************************
   */
   construct() {
+    super();
     this.TEST_MIXINS = [qx.dev.unit.MMock, qx.dev.unit.MRequirements];
     if (qx.core.Environment.get("qxl.testrunner.performance")) {
       this.TEST_MIXINS.push(qx.dev.unit.MMeasure);
@@ -41,7 +42,6 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
       qx.Class.include(viewClass, qxl.testrunner.view.MReportResult);
     }
 
-    super();
 
     // Get log appender element from view
     if (this.view.getLogAppenderElement) {
