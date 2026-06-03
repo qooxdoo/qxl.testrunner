@@ -35,7 +35,7 @@ qx.Class.define("qxl.testrunner.runner.TestRunnerBasic", {
       if (typeof runner.view.toggleAllTests == "function") {
         runner.view.toggleAllTests(true);
       }
-    },
+    }
   },
 
   /*
@@ -44,6 +44,7 @@ qx.Class.define("qxl.testrunner.runner.TestRunnerBasic", {
   *****************************************************************************
   */
   construct() {
+    super();
     if (qx.core.Environment.get("qx.globalErrorHandling")) {
       qx.event.GlobalError.setErrorHandler(this._handleGlobalError, this);
     }
@@ -96,9 +97,9 @@ qx.Class.define("qxl.testrunner.runner.TestRunnerBasic", {
         "running",
         "finished",
         "aborted",
-        "error",
+        "error"
       ],
-      event: "changeTestSuiteState",
+      event: "changeTestSuiteState"
     },
 
     /** Number of tests that haven't run yet */
@@ -106,22 +107,22 @@ qx.Class.define("qxl.testrunner.runner.TestRunnerBasic", {
       init: null,
       nullable: true,
       check: "Integer",
-      event: "changeTestCount",
+      event: "changeTestCount"
     },
 
     /** Model object representing the test namespace. */
     testModel: {
       init: null,
       nullable: true,
-      event: "changeTestModel",
+      event: "changeTestModel"
     },
 
     /** List of tests selected by the user */
     selectedTests: {
       nullable: true,
       init: null,
-      apply: "_applySelectedTests",
-    },
+      apply: "_applySelectedTests"
+    }
   },
 
   /*
@@ -239,7 +240,7 @@ qx.Class.define("qxl.testrunner.runner.TestRunnerBasic", {
       var qxClass = qx.Class;
       return qxClass.define(testClassName, {
         extend: qx.dev.unit.TestCase,
-        members: membersMap,
+        members: membersMap
       });
     },
 
@@ -318,7 +319,7 @@ qx.Class.define("qxl.testrunner.runner.TestRunnerBasic", {
       var delegate = {
         getModelSuperClass(properties) {
           return qxl.testrunner.runner.TestItem;
-        },
+        }
       };
 
       var marshal = new qx.data.marshal.Json(delegate);
@@ -692,7 +693,7 @@ qx.Class.define("qxl.testrunner.runner.TestRunnerBasic", {
      */
     _handleGlobalError(ex) {
       this.error(ex);
-    },
+    }
   },
 
   destruct() {
@@ -706,5 +707,5 @@ qx.Class.define("qxl.testrunner.runner.TestRunnerBasic", {
     this._disposeArray("testList");
     this._disposeArray("testPackageList");
     this._disposeObjects("view", "currentTestData", "loader");
-  },
+  }
 });

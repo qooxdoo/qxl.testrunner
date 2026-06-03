@@ -37,6 +37,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
   include: [qxl.testrunner.view.MAutoRun],
 
   construct() {
+    super();
     this.__menuItemStore = {};
 
     this.__app = qx.core.Init.getApplication();
@@ -61,7 +62,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
     mainContainer.add(mainsplit, { flex: 1 });
 
     this.__labelDeco = new qx.ui.decoration.Decorator().set({
-      backgroundColor: "white",
+      backgroundColor: "white"
     });
 
     var leftPane = this.__createTestList();
@@ -97,22 +98,22 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
     TREEICONS: {
       package: "qxl/testrunner/view/widget/image/package18_grey.gif",
       class: "qxl/testrunner/view/widget/image/class18_grey.gif",
-      test: "qxl/testrunner/view/widget/image/method_public18_grey.gif",
+      test: "qxl/testrunner/view/widget/image/method_public18_grey.gif"
     },
 
     /** Green icons for items without failures */
     TREEICONSOK: {
       package: "qxl/testrunner/view/widget/image/package18.gif",
       class: "qxl/testrunner/view/widget/image/class18.gif",
-      test: "qxl/testrunner/view/widget/image/method_public18.gif",
+      test: "qxl/testrunner/view/widget/image/method_public18.gif"
     },
 
     /** Red icons for items with failures */
     TREEICONSERROR: {
       package: "qxl/testrunner/view/widget/image/package_warning18.gif",
       class: "qxl/testrunner/view/widget/image/class_warning18.gif",
-      test: "qxl/testrunner/view/widget/image/method_public_error18.gif",
-    },
+      test: "qxl/testrunner/view/widget/image/method_public_error18.gif"
+    }
   },
 
   properties: {
@@ -120,49 +121,49 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
     showStackTrace: {
       check: "Boolean",
       event: "changeShowStackTrace",
-      init: true,
+      init: true
     },
 
     /** Delete any existing results from the list before running tests? */
     clearResultsOnRun: {
       check: "Boolean",
       event: "changeClearResultsOnRun",
-      init: true,
+      init: true
     },
 
     /** Running count of failed tests */
     failedTestCount: {
       check: "Integer",
       init: 0,
-      event: "changeFailedTestCount",
+      event: "changeFailedTestCount"
     },
 
     /** Running count of passed tests */
     successfulTestCount: {
       check: "Integer",
       init: 0,
-      event: "changeSuccessfulTestCount",
+      event: "changeSuccessfulTestCount"
     },
 
     /** Running count of skipped tests */
     skippedTestCount: {
       check: "Integer",
       init: 0,
-      event: "changeSkippedTestCount",
+      event: "changeSkippedTestCount"
     },
 
     /** Reload the test suite before running the selected tests */
     autoReload: {
       check: "Boolean",
-      init: false,
+      init: false
     },
 
     /** Log level for the AUT log appender */
     logLevel: {
       check: ["debug", "info", "warn", "error"],
       init: "debug",
-      event: "changeLogLevel",
-    },
+      event: "changeLogLevel"
+    }
   },
 
   members: {
@@ -252,7 +253,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
               return true;
               break;
           }
-        },
+        }
       });
 
       // Run button
@@ -264,7 +265,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
         textColor: "#36a618",
         rich: true,
         visibility: "excluded",
-        toolTipText: this.__app.tr("Run selected tests (Ctrl+R)"),
+        toolTipText: this.__app.tr("Run selected tests (Ctrl+R)")
       });
 
       runButton.setUserData("value", "run");
@@ -281,7 +282,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
       stopButton.set({
         textColor: "#ff0000",
         rich: true,
-        toolTipText: this.__app.tr("Stop the test suite (Ctrl+S)"),
+        toolTipText: this.__app.tr("Stop the test suite (Ctrl+S)")
       });
 
       stopButton.setUserData("value", "stop");
@@ -312,7 +313,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
             default:
               return true;
           }
-        },
+        }
       });
 
       var autUriField = new qx.ui.form.TextField();
@@ -332,7 +333,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
       autUriField.set({
         width: 300,
         alignY: "middle",
-        marginLeft: 3,
+        marginLeft: 3
       });
 
       toolbar.add(autUriField, { flex: 1 });
@@ -352,7 +353,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
         converter(data) {
           qx.bom.Cookie.set("qxl.testrunner.autoReload", data.toString(), 365);
           return data;
-        },
+        }
       });
 
       part3.add(autoReloadToggle);
@@ -381,7 +382,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
             365
           );
           return data;
-        },
+        }
       });
 
       part3.add(nativeProfilingToggle);
@@ -544,7 +545,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
       //layout.setSeparator("separator-vertical");
 
       var container = new qx.ui.container.Composite(layout).set({
-        decorator: "main",
+        decorator: "main"
       });
 
       var leftPaneWidth = qx.bom.Cookie.get("qxl.testrunner.leftPaneWidth");
@@ -561,7 +562,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
         decorator: this.__labelDeco,
         padding: [8, 3, 7, 10],
         allowGrowX: true,
-        allowGrowY: true,
+        allowGrowY: true
       });
 
       container.add(caption);
@@ -573,11 +574,11 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
         labelPath: "name",
         childProperty: "children",
         delegate: {
-          bindItem: this.__bindTreeItem,
+          bindItem: this.__bindTreeItem
         },
 
         decorator: "separator-vertical",
-        padding: 0,
+        padding: 0
       });
 
       var selection = new qx.data.Array();
@@ -654,7 +655,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
             }
 
             return qxl.testrunner.view.widget.Widget[iconMap][type];
-          },
+          }
         },
         node,
         id
@@ -683,7 +684,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
       layout.setSeparator("separator-vertical");
 
       var p1 = new qx.ui.container.Composite(layout).set({
-        decorator: "main",
+        decorator: "main"
       });
 
       p1.setUserData("pane", "center");
@@ -696,7 +697,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
         decorator: this.__labelDeco,
         padding: [8, 3, 7, 10],
         allowGrowX: true,
-        allowGrowY: true,
+        allowGrowY: true
       });
 
       inner.add(caption1, { edge: "west" });
@@ -727,7 +728,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
         "icon/16/actions/document-properties.png"
       );
       resultsMenuButton.set({
-        margin: [3, 5],
+        margin: [3, 5]
       });
 
       var resultsMenu = new qx.ui.menu.Menu();
@@ -778,7 +779,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
       var layout2 = new qx.ui.layout.VBox();
 
       var pp3 = new qx.ui.container.Composite(layout2).set({
-        decorator: "main",
+        decorator: "main"
       });
 
       var caption3 = new qx.ui.basic.Label(
@@ -788,7 +789,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
         decorator: this.__labelDeco,
         padding: [8, 3, 7, 10],
         allowGrowX: true,
-        allowGrowY: true,
+        allowGrowY: true
       });
 
       pp3.add(caption3);
@@ -802,7 +803,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
         width: 50,
         height: 50,
         zIndex: 5,
-        decorator: "separator-vertical",
+        decorator: "separator-vertical"
       });
 
       return pp3;
@@ -841,7 +842,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
       labelBox.add(new qx.ui.basic.Label(this.__app.tr("Queued: ")));
       var queuecnt = new qx.ui.basic.Label("0").set({
         width: 40,
-        font: "bold",
+        font: "bold"
       });
 
       labelBox.add(queuecnt);
@@ -853,14 +854,14 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
           }
 
           return "0";
-        },
+        }
       });
 
       labelBox.add(new qx.ui.basic.Label(this.__app.tr("Failed: ")));
       var failcnt = new qx.ui.basic.Label("0").set({
         width: 40,
         font: "bold",
-        textColor: "#9D1111",
+        textColor: "#9D1111"
       });
 
       labelBox.add(failcnt);
@@ -868,14 +869,14 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
       this.bind("failedTestCount", failcnt, "value", {
         converter(data) {
           return data.toString();
-        },
+        }
       });
 
       labelBox.add(new qx.ui.basic.Label(this.__app.tr("Succeeded: ")));
       var succcnt = new qx.ui.basic.Label("0").set({
         width: 40,
         font: "bold",
-        textColor: "#51A634",
+        textColor: "#51A634"
       });
 
       labelBox.add(succcnt);
@@ -883,7 +884,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
       this.bind("successfulTestCount", succcnt, "value", {
         converter(data) {
           return data.toString();
-        },
+        }
       });
 
       labelBox.add(new qx.ui.basic.Label(this.__app.tr("Skipped: ")));
@@ -891,7 +892,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
         width: 40,
         font: "bold",
         marginRight: 5,
-        textColor: "#888",
+        textColor: "#888"
       });
 
       labelBox.add(skipcnt);
@@ -899,7 +900,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
       this.bind("skippedTestCount", skipcnt, "value", {
         converter(data) {
           return data.toString();
-        },
+        }
       });
 
       return container;
@@ -914,12 +915,12 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
       var layout = new qx.ui.layout.HBox(3);
       var statuspane = new qx.ui.container.Composite(layout);
       statuspane.set({
-        margin: [0, 10, 10, 10],
+        margin: [0, 10, 10, 10]
       });
 
       var l2 = new qx.ui.basic.Label("0").set({
         font: "bold",
-        textAlign: "right",
+        textAlign: "right"
       });
 
       this.__testCountField = l2;
@@ -928,7 +929,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
 
       statuspane.add(
         new qx.ui.basic.Label(this.__app.tr("tests selected")).set({
-          alignY: "middle",
+          alignY: "middle"
         })
       );
 
@@ -956,12 +957,12 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
       // System Info
       statuspane.add(
         new qx.ui.basic.Label(this.__app.tr("System Status: ")).set({
-          textAlign: "right",
+          textAlign: "right"
         })
       );
 
       var l3 = new qx.ui.basic.Label("").set({
-        textAlign: "right",
+        textAlign: "right"
       });
 
       statuspane.add(l3);
@@ -1265,7 +1266,7 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
         centerPane.setLayoutProperties({ flex: centerWidth });
         rightPane.setLayoutProperties({ flex: rightWidth });
       }
-    },
+    }
   },
 
   destruct() {
@@ -1287,5 +1288,5 @@ qx.Class.define("qxl.testrunner.view.widget.Widget", {
     );
 
     this._disposeMap("__menuItemStore");
-  },
+  }
 });

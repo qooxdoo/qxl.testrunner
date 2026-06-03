@@ -23,8 +23,8 @@
     }
   },
   "requires": {
-    "@qooxdoo/framework": "^7.0.0",
-    "qooxdoo/qxl.versionlabel": "^2.0.0",
-    "qooxdoo/qxl.logpane": "^2.0.0"
+    "@qooxdoo/framework": ">=7.0.0",
+    "qooxdoo/qxl.versionlabel": ">=2.0.0",
+    "qooxdoo/qxl.logpane": ">=2.0.0"
   }
 }

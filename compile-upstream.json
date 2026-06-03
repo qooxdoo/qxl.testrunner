@@ -47,11 +47,11 @@
         "targets": "Chrome >= 100, Firefox >= 100"
       },
       "type": "source",
-      "outputPath": "compiled/source"
+      "outputPath": "compiled-upstream/source"
     },
     {
       "type": "build",
-      "outputPath": "compiled/build"
+      "outputPath": "compiled-upstream/build"
     }
   ],
   "defaultTarget": "source",
@@ -62,5 +62,5 @@
   "eslintConfig": {
     "extends": ["@qooxdoo/qx/browser", "@qooxdoo/qx", "@qooxdoo/jsdoc-disable"]
   },
-  "libraries": [".", "../qooxdoo"]
+  "libraries": [".", "../qooxdoo-upstream"]
 }

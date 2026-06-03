@@ -36,7 +36,7 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView", {
     this.set({
       overflowX: "auto",
       overflowY: "auto",
-      selectable: true,
+      selectable: true
     });
 
     if (qx.core.Environment.get("device.type") !== "desktop") {
@@ -63,8 +63,8 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView", {
     showStackTrace: {
       check: "Boolean",
       init: true,
-      apply: "__applyShowStackTrace",
-    },
+      apply: "__applyShowStackTrace"
+    }
   },
 
   /*
@@ -166,7 +166,7 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView", {
         "ul",
         {},
         {
-          class: "resultPane",
+          class: "resultPane"
         }
       );
     },
@@ -228,11 +228,13 @@ qx.Class.define("qxl.testrunner.view.widget.TestResultView", {
      */
     __applyShowStackTrace(value) {
       var coll = q(".resultPane .trace");
-      value ? coll.show() : coll.hide();
-    },
+      if (coll !== q(window)) {
+        value ? coll.show() : coll.hide();
+      }
+    }
   },
 
   destruct() {
     this.__results = null;
-  },
+  }
 });
