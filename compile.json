@@ -12,6 +12,7 @@
       "include": ["qxl.testrunner.view.widget.Widget"],
       "exclude": ["qx.tool.*", "qx.test.tool.*", "qx.test.compiler.*"],
       "environment": {
+        "qx.environment.allowRuntimeMutations": true,
         "qxl.testrunner.performance": true,
         "qxl.testrunner.reportPerfResultUrl": false,
         "qxl.testrunner.reportServer": false,
@@ -31,6 +32,7 @@
       "include": ["qx.test.*"],
       "exclude": ["qx.tool.*", "qx.test.tool.*", "qx.test.compiler.*"],
       "environment": {
+        "qx.environment.allowRuntimeMutations": true,
         "qx.standaloneAutorun": false,
         "qx.test.bool_false": false,
         "qx.test.bool_true": true,
@@ -47,7 +49,11 @@
         "targets": "Chrome >= 100, Firefox >= 100"
       },
       "type": "source",
-      "outputPath": "compiled/source"
+      "outputPath": "compiled/source",
+      "babelOptions": {
+        "targets": "chrome >= 80, firefox >= 80"
+      },
+      "addCreatedAt": true
     },
     {
       "type": "build",

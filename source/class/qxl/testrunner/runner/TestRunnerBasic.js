@@ -19,7 +19,8 @@
 /**
  * The TestRunner is responsible for loading the test classes and keeping track
  * of the test suite's state.
- *
+ *  @ignore(java)
+ *  @ignore(Packages)
  */
 qx.Class.define("qxl.testrunner.runner.TestRunnerBasic", {
   extend: qx.core.Object,

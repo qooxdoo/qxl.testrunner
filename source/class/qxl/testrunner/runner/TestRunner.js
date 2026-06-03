@@ -42,6 +42,7 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
       qx.Class.include(viewClass, qxl.testrunner.view.MReportResult);
     }
 
+
     // Get log appender element from view
     if (this.view.getLogAppenderElement) {
       this.__logAppender = new qx.log.appender.Element();
@@ -164,7 +165,7 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
       var qxClass = qx.Class;
       var classDef = {
         extend: qx.dev.unit.TestCase,
-        members: membersMap
+        members: membersMap,
       };
 
       if (this.TEST_MIXINS) {
@@ -309,7 +310,7 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
         logger.clear();
         logger.unregister(this.__logAppender);
       }
-    }
+    },
   },
 
   destruct() {
@@ -318,5 +319,5 @@ qx.Class.define("qxl.testrunner.runner.TestRunner", {
     delete this.__iframe;
     this.frameWindow = null;
     delete this.frameWindow;
-  }
+  },
 });
